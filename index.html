@@ -1,0 +1,65 @@
+<!-- Kanban Board Structure -->
+ <!DOCTYPE html>
+ <html lang="en">
+ <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanban Board</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet"> -->
+    <script src="script.js" defer></script>
+</head>
+ <body>
+    <div class="container">
+        <h1>Kanbanzawa, Hyacinth Marie</h1>
+        <div class="container-columns">
+            <div class="column" data-column="to-do">
+                <div class="column-title"></div>
+                <h3>To do</h3>
+                <button class="add-btn">+</button>
+                <div class="add-task" hidden>
+                    <input type="text" placeholder="Enter Task" class="task-name">
+                    <textarea placeholder="note" class="task-note"></textarea>
+                    <div class="form-actions">
+                        <button class="cancel-btn">Cancel</button>
+                        <button class="confirm-btn">Add</button>
+                    </div>
+                </div>
+                <div class="tasks"></div>
+            </div>
+            <div class="column" data-column="doing">
+                <div class="column-title"></div>
+                <h3>Doing</h3>
+                <button class="add-btn">+</button>
+                <div class="add-task" hidden>
+                    <input type="text" placeholder="enter task" class="task-name">
+                    <textarea placeholder="add a note" class="task-note"></textarea>
+                    <div class="form-actions">
+                        <button class="cancel-btn">Cancel</button>
+                        <button class="confirm-btn">Add</button>
+                    </div>
+                </div>
+                <div class="tasks">
+                    <div class="task">
+
+                    </div>
+                </div>
+            </div>
+            <div class="column" data-column="done">
+                <div class="column-title"></div>
+                <h3>Done</h3>
+                <button class="add-btn">+</button>
+                <div class="add-task" hidden>
+                    <input type="text" placeholder="Enter Task" class="task-name">
+                    <textarea placeholder="note" class="task-note"></textarea>
+                    <div class="form-actions">
+                        <button class="cancel-btn">Cancel</button>
+                        <button class="confirm-btn">Add</button>
+                    </div>
+                </div>
+                <div class="tasks"></div>
+            </div>
+        </div>
+    </div>
+ </body>
+ </html>

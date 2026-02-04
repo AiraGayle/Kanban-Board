@@ -1,0 +1,56 @@
+/* Kanban Board Design */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+:root{
+
+}
+
+* {
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    min-width: 100vh;
+    background: var(--bg-color);
+    color: var(--text-color);
+}
+
+h1 {
+    margin: 2rem 0;
+    text-align: center;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.container-columns {
+    width: 90%;
+    display: flex;
+    gap: 1.5rem;
+}
+
+.column {
+    flex: 1;
+    background: var(--columns-color);
+    border-radius: 10px;
+    padding: 0.75rem;
+}
+
+.task {
+    background: var(--bg-color);
+    padding: 0.5rem;
+    border-radius: 10px;
+    
+}
+
+.task p {
+    font-size: 0.7rem;  
+    margin: 0;
+    color: grey;  
+}
