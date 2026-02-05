@@ -12,9 +12,6 @@
     --low-color: #4274c5;
     --medium-color: #ffcc00;
     --high-color: #c72f2f;
-
-    --btn-dark: #3f425f;
-    --btn-light: #2c2f4a;
 }
 
 * {
@@ -131,13 +128,13 @@ button:hover {
 }
 
 .tasks::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.25); 
+    background: #00000040; 
     border-radius: 3px;
     transition: background 0.2s;
 }
 
 .tasks::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 0, 0, 0.35); 
+    background: #00000059; 
 }
 
 .task {
@@ -147,7 +144,8 @@ button:hover {
     background: var(--bg-color);
     display: flex;
     flex-direction: column;
-    border: 1px solid rgba(255, 255, 255, 0.25);
+    border: 1px solid #ffffff40;
+    border-radius: 4px;
     gap: 0.5rem;
 }
 
@@ -190,9 +188,9 @@ button:hover {
 }
 
 .add-task-section:not([hidden]) {
-    background: rgba(255, 255, 255, 0.03); 
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 8px;
+    background: #ffffff08; 
+    border: 1px solid #ffffff14;
+    border-radius: 4px;
     padding: 1rem;
     margin: 0.6rem;
     display: flex;
@@ -206,14 +204,32 @@ button:hover {
     width: 100%;
     background: var(--text-color);
     color: var(--bg-color);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 6px;
+    border: 1px solid #ffffff1f;
+    border-radius: 4px;
     padding: 0.45rem 0.6rem;
     font-size: 0.85rem;
 }
 
 .add-task-section textarea {
     min-height: 60px;
+}
+
+.task-name-form:focus,
+.task-note-form:focus,
+.task-priority-input:focus {
+    outline: 2px solid var(--bg-color);
+}
+
+.add-task-section input::placeholder,
+.add-task-section textarea::placeholder,
+.add-task-section select::placeholder {
+    color: gray;        
+}
+
+.add-task-section input:focus::placeholder,
+.add-task-section textarea:focus::placeholder,
+.add-task-section select:focus::placeholder {
+    color: #c8c8c8;    
 }
 
 .priority-row {
@@ -243,7 +259,8 @@ button:hover {
     color: var(--text-color);
 }
 
-.cancel-btn:hover {
+.cancel-btn:hover, 
+.cancel-btn:focus {
     background: #4b4d6e;     
 }
 
@@ -253,6 +270,7 @@ button:hover {
     color: var(--text-color);
 }
 
-.confirm-btn:hover {
-    background: #383b5c;       /* slightly lighter on hover */
+.confirm-btn:hover, 
+.confirm-btn:focus {
+    background: #383b5c;      
 }

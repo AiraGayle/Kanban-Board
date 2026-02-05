@@ -68,11 +68,11 @@ function createNewTask(title, note, column, priority = "Low") {
 // Get data for each column
 columns.forEach(column => {
     const addButton = column.querySelector(".add-btn");
-    // Clone form from template
+
+    // Use add task form from template
     const template = document.querySelector("#add-task-form-template");
     const clone = template.content.cloneNode(true);
     const form = clone.querySelector(".add-task-section");
-
     const tasksContainer = column.querySelector(".tasks");
     column.insertBefore(form, tasksContainer);
 
