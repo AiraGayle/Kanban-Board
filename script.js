@@ -3,6 +3,7 @@
 const columns = document.querySelectorAll(".column");
 let tasks = JSON.parse(localStorage.getItem("tasks")) || []
 const addTaskFormTemplate = document.querySelector("#add-task-form-template");
+const editTaskFormTemplate = document.querySelector("#edit-task-form-template");
 
 // Save Tasks
 function saveTask() {
@@ -13,6 +14,7 @@ function saveTask() {
 function createTaskElement(task) {
     const div = document.createElement("div");
     div.className = "task";
+    div.dataset.taskId = task.id;
 
     const titleDiv = document.createElement("div");
     titleDiv.className = "task-title";
@@ -31,6 +33,36 @@ function createTaskElement(task) {
     priorityDiv.className = `task-priority ${task.priority.toLowerCase()}`;
     priorityDiv.textContent = `${task.priority} Priority`
     div.appendChild(priorityDiv);
+
+    // Add action buttons container
+    const actionsDiv = document.createElement("div");
+    actionsDiv.className = "task-actions";
+
+    const editBtn = document.createElement("button");
+    editBtn.className = "edit-btn";
+    editBtn.textContent = "Edit";
+    editBtn.setAttribute("aria-label", "Edit Task");
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.className = "delete-btn";
+    deleteBtn.textContent = "Delete";
+    deleteBtn.setAttribute("aria-label", "Delete Task");
+
+    actionsDiv.appendChild(editBtn);
+    actionsDiv.appendChild(deleteBtn);
+    div.appendChild(actionsDiv);
+
+    // Edit button event listener
+    editBtn.addEventListener("click", () => {
+        // Find the parent column
+        const parentColumn = div.closest(".column");
+        showEditForm(task, parentColumn);
+    });
+
+    // Delete button event listener
+    deleteBtn.addEventListener("click", () => {
+        deleteTask(task.id);
+    });
 
     return div;
 }
@@ -55,6 +87,7 @@ function createNewTask(title, note, column, priority = "Low") {
     }
 
     const newTask = {
+        id: Date.now(),
         title: title.trim(), 
         note: note.trim(),
         column,
@@ -65,7 +98,73 @@ function createNewTask(title, note, column, priority = "Low") {
     displayTasks();
 }
 
-// Get data for each column
+// Delete a task
+function deleteTask(taskId) {
+    tasks = tasks.filter(task => task.id !== taskId);
+    saveTask();
+    displayTasks();
+}
+
+// Update a task
+function updateTask(taskId, title, note, priority) {
+    const task = tasks.find(t => t.id === taskId);
+    if (task) {
+        task.title = title.trim();
+        task.note = note.trim();
+        task.priority = priority;
+        saveTask();
+        displayTasks();
+    }
+}
+
+// Show edit form for a task
+function showEditForm(task, column) {
+    // Hide all other edit forms
+    document.querySelectorAll(".edit-task-section:not([hidden])").forEach(form => {
+        form.hidden = true;
+    });
+
+    const editForm = column.querySelector(".edit-task-section");
+    const editTitleInput = editForm.querySelector(".edit-task-name-form");
+    const editNoteInput = editForm.querySelector(".edit-task-note-form");
+    const editPriorityInput = editForm.querySelector(".edit-task-priority-input");
+    const editConfirmButton = editForm.querySelector(".edit-confirm-btn");
+    const editCancelButton = editForm.querySelector(".edit-cancel-btn");
+
+    // Pre-fill the form with current task values
+    editTitleInput.value = task.title;
+    editNoteInput.value = task.note;
+    editPriorityInput.value = task.priority;
+
+    editForm.hidden = false;
+    editTitleInput.focus();
+
+    // Clear previous event listeners by cloning
+    const newConfirmButton = editConfirmButton.cloneNode(true);
+    editConfirmButton.parentNode.replaceChild(newConfirmButton, editConfirmButton);
+
+    const newCancelButton = editCancelButton.cloneNode(true);
+    editCancelButton.parentNode.replaceChild(newCancelButton, editCancelButton);
+
+    // Add new event listener for confirm
+    newConfirmButton.addEventListener("click", () => {
+        if (editTitleInput.value.trim() === "") return;
+
+        updateTask(
+            task.id,
+            editTitleInput.value,
+            editNoteInput.value,
+            editPriorityInput.value
+        );
+
+        editForm.hidden = true;
+    });
+
+    // Add new event listener for cancel
+    newCancelButton.addEventListener("click", () => {
+        editForm.hidden = true;
+    });
+}
 columns.forEach(column => {
     const addButton = column.querySelector(".add-btn");
 
@@ -111,5 +210,12 @@ columns.forEach(column => {
         form.hidden = true;
     })
 });
-
+// Clone edit form into each column
+columns.forEach(column => {
+    const editTemplate = document.querySelector("#edit-task-form-template");
+    const editClone = editTemplate.content.cloneNode(true);
+    const editForm = editClone.querySelector(".edit-task-section");
+    const tasksContainer = column.querySelector(".tasks");
+    column.insertBefore(editForm, tasksContainer);
+});
 displayTasks();
