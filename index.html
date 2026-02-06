@@ -74,5 +74,25 @@
             </div>
         </div>
     </template>
+
+    <!-- Template for Editing Tasks Section -->
+    <template id="edit-task-form-template">
+        <div class="edit-task-section" hidden>
+            <input type="text" placeholder="Enter Task" class="edit-task-name-form">
+            <textarea placeholder="Add a note" class="edit-task-note-form"></textarea>
+            <div class="priority-row">
+                <label for="edit-priority">Priority:</label>
+                <select class="edit-task-priority-input" id="edit-priority">
+                    <option value="Low" selected>Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                </select>
+            </div>
+            <div class="form-actions">
+                <button class="edit-cancel-btn" type="button">Cancel</button>
+                <button class="edit-confirm-btn" type="button">Update Task</button>
+            </div>
+        </div>
+    </template>
  </body>
  </html>

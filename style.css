@@ -183,11 +183,56 @@ button:hover {
     border-left-color: var(--low-color);
 }
 
+.task-actions {
+    display: flex;
+    gap: 0.4rem;
+    justify-content: flex-end;
+    margin-top: 0.3rem;
+}
+
+.edit-btn,
+.delete-btn {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.75rem;
+    border-radius: 3px;
+    border: 1px solid #ffffff1f;
+    color: var(--text-color);
+    background: #3f425f;
+}
+
+.edit-btn:hover,
+.delete-btn:hover {
+    background: #4b4d6e;
+}
+
+.delete-btn {
+    background: #5f3f3f;
+}
+
+.delete-btn:hover {
+    background: #6e4b4b;
+}
+
 .add-task-section[hidden] {
     display: none;
 }
 
 .add-task-section:not([hidden]) {
+    background: #ffffff08; 
+    border: 1px solid #ffffff14;
+    border-radius: 4px;
+    padding: 1rem;
+    margin: 0.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.edit-task-section[hidden] {
+    display: none;
+}
+
+.edit-task-section:not([hidden]) {
     background: #ffffff08; 
     border: 1px solid #ffffff14;
     border-radius: 4px;
@@ -210,6 +255,18 @@ button:hover {
     font-size: 0.85rem;
 }
 
+.edit-task-section input,
+.edit-task-section textarea,
+.edit-task-section select {
+    width: 100%;
+    background: var(--text-color);
+    color: var(--bg-color);
+    border: 1px solid #ffffff1f;
+    border-radius: 4px;
+    padding: 0.45rem 0.6rem;
+    font-size: 0.85rem;
+}
+
 .add-task-section textarea {
     min-height: 60px;
 }
@@ -217,6 +274,13 @@ button:hover {
 .task-name-form:focus,
 .task-note-form:focus,
 .task-priority-input:focus {
+    outline: 2px solid var(--bg-color);
+}
+
+.edit-task-name-form:focus,
+.edit-task-note-form:focus,
+.edit-task-priority-input:focus,
+.edit-task-column-input:focus {
     outline: 2px solid var(--bg-color);
 }
 
@@ -229,6 +293,18 @@ button:hover {
 .add-task-section input:focus::placeholder,
 .add-task-section textarea:focus::placeholder,
 .add-task-section select:focus::placeholder {
+    color: #c8c8c8;    
+}
+
+.edit-task-section input::placeholder,
+.edit-task-section textarea::placeholder,
+.edit-task-section select::placeholder {
+    color: gray;        
+}
+
+.edit-task-section input:focus::placeholder,
+.edit-task-section textarea:focus::placeholder,
+.edit-task-section select:focus::placeholder {
     color: #c8c8c8;    
 }
 
@@ -272,5 +348,27 @@ button:hover {
 
 .confirm-btn:hover, 
 .confirm-btn:focus {
+    background: #383b5c;      
+}
+
+.edit-cancel-btn { 
+    background: #3f425f;
+    border: 1px solid #3a3d63;
+    color: var(--text-color);
+}
+
+.edit-cancel-btn:hover, 
+.edit-cancel-btn:focus {
+    background: #4b4d6e;     
+}
+
+.edit-confirm-btn {
+    background-color: #2c2f4a; 
+    border: 1px solid #3a3d63;
+    color: var(--text-color);
+}
+
+.edit-confirm-btn:hover, 
+.edit-confirm-btn:focus {
     background: #383b5c;      
 }
