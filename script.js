@@ -2,6 +2,7 @@
 
 const columns = document.querySelectorAll(".column");
 let tasks = JSON.parse(localStorage.getItem("tasks")) || []
+let draggedTask = null;
 const addTaskFormTemplate = document.querySelector("#add-task-form-template");
 const editTaskFormTemplate = document.querySelector("#edit-task-form-template");
 
@@ -15,6 +16,7 @@ function createTaskElement(task) {
     const div = document.createElement("div");
     div.className = "task";
     div.dataset.taskId = task.id;
+    div.draggable = true; // Make task draggable
 
     const titleDiv = document.createElement("div");
     titleDiv.className = "task-title";
@@ -64,7 +66,44 @@ function createTaskElement(task) {
         deleteTask(task.id);
     });
 
+    // Drag event listener
+    div.addEventListener("dragstart", () => {
+        draggedTask = task.id;
+        DragAndDrop(); // i made this into a function to follow "clean code"....yay or nay? 
+    });
+
     return div;
+}
+
+// Drag and drop system 
+function DragAndDrop() {
+    columns.forEach(column => {
+        const taskContainer = column.querySelector(".tasks");
+
+        // Allow Drop
+        taskContainer.addEventListener("dragover", (e) => {
+            e.preventDefault();
+        });
+
+        // Handle Drop
+        taskContainer.addEventListener("drop", (e) => {
+            e.preventDefault();
+
+            if (draggedTask === null) return;
+
+            const taskBx = tasks.find(t => t.id == draggedTask);
+
+            if (!taskBx) return;
+
+            taskBx.column = column.dataset.column
+
+            saveTask();
+            displayTasks();
+
+            draggedTask = null;
+        })
+
+    });
 }
 
 // Display loaded tasks
