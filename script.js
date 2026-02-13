@@ -6,6 +6,12 @@ let draggedTask = null;
 const addTaskFormTemplate = document.querySelector("#add-task-form-template");
 const editTaskFormTemplate = document.querySelector("#edit-task-form-template");
 
+//Keyboard shortcuts 
+let activeColumn = null;
+let selectedTaskId = null;
+
+
+
 // Save Tasks
 function saveTask() {
     localStorage.setItem("tasks", JSON.stringify(tasks));
@@ -17,6 +23,8 @@ function createTaskElement(task) {
     div.className = "task";
     div.dataset.taskId = task.id;
     div.draggable = true; // Make task draggable
+
+    div.tabIndex = 0; // focus on task
 
     const titleDiv = document.createElement("div");
     titleDiv.className = "task-title";
@@ -70,6 +78,12 @@ function createTaskElement(task) {
     div.addEventListener("dragstart", () => {
         draggedTask = task.id;
         DragAndDrop(); // i made this into a function to follow "clean code"....yay or nay? 
+    });
+
+    //for keyboard shortcut
+    div.addEventListener("focus", () => {
+    selectedTaskId = task.id;
+    activeColumn = div.closest(".column");
     });
 
     return div;
@@ -156,6 +170,25 @@ function updateTask(taskId, title, note, priority) {
     }
 }
 
+//move task - keyboard shortcut
+function moveTask(direction) {
+    if (!activeColumn || !selectedTaskId) return;
+
+    const columnArray = Array.from(columns);
+    const currentIndex = columnArray.indexOf(activeColumn);
+    const newIndex = currentIndex + direction;
+
+    if (newIndex < 0 || newIndex >= columnArray.length) return;
+
+    const task = tasks.find(t => t.id === selectedTaskId);
+    if (!task) return;
+
+    task.column = columnArray[newIndex].dataset.column;
+
+    saveTask();
+    displayTasks();
+}
+
 // Show edit form for a task
 function showEditForm(task, column) {
     // Hide all other edit forms
@@ -205,6 +238,12 @@ function showEditForm(task, column) {
     });
 }
 columns.forEach(column => {
+
+    //for tracking active column - keyboard shortcut
+    column.addEventListener("click", () => {
+        activeColumn = column;
+    });
+
     const addButton = column.querySelector(".add-btn");
 
     // Use add task form from template
@@ -219,6 +258,8 @@ columns.forEach(column => {
     const cancelButton = form.querySelector(".cancel-btn");
     const confirmButton = form.querySelector(".confirm-btn");
     const priorityInput = form.querySelector(".task-priority-input");
+
+   
 
     // If + button is clicked
     addButton.addEventListener("click", () => {
@@ -248,6 +289,7 @@ columns.forEach(column => {
         priorityInput.value = "Low";
         form.hidden = true;
     })
+ 
 });
 // Clone edit form into each column
 columns.forEach(column => {
@@ -258,3 +300,103 @@ columns.forEach(column => {
     column.insertBefore(editForm, tasksContainer);
 });
 displayTasks();
+
+
+//keyboard shortcuts 
+document.addEventListener("keydown", handleShortcuts);
+
+function handleShortcuts(event) {
+
+    // Prevent shortcuts inside inputs
+    if (["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement.tagName)) {
+        return;
+    }
+
+    if (!activeColumn) return;
+
+    const key = event.key.toLowerCase();
+
+    // ADD TASK → alt + a
+    if (event.altKey && key === "a") {
+        event.preventDefault();
+        activeColumn.querySelector(".add-btn")?.click();
+
+    }
+
+
+    // DELETE → alt + d
+    if (event.altKey && key === "d" && selectedTaskId) {
+        event.preventDefault();
+        deleteTask(selectedTaskId);
+    }
+
+    // EDIT → alt + e
+    if (event.altKey && key === "e" && selectedTaskId) {
+        event.preventDefault();
+        const task = tasks.find(t => t.id === selectedTaskId);
+        if (task) showEditForm(task, activeColumn);
+    }
+
+    // MOVE RIGHT → alt + →
+    if (event.altKey && event.key === "ArrowRight") {
+        event.preventDefault();
+        moveTask(1);
+    }
+
+    // MOVE LEFT → alt + ←
+    if (event.altKey && event.key === "ArrowLeft") {
+        event.preventDefault();
+        moveTask(-1);
+    }
+
+    if (event.key === "ArrowDown") {
+    event.preventDefault();
+
+    const current = document.activeElement;
+    const next = current.nextElementSibling;
+
+    if (next && next.classList.contains("task")) {
+        next.focus();
+    }
+    }
+
+    if (event.key === "ArrowUp") {
+        event.preventDefault();
+
+        const current = document.activeElement;
+        const prev = current.previousElementSibling;
+
+        if (prev && prev.classList.contains("task")) {
+            prev.focus();
+        }
+    }
+
+    if (event.key === "ArrowRight" && !event.ctrlKey) {
+    event.preventDefault();
+    moveFocusColumn(1);
+    }
+
+    if (event.key === "ArrowLeft" && !event.ctrlKey) {
+        event.preventDefault();
+        moveFocusColumn(-1);
+    }
+
+}
+
+function moveFocusColumn(direction) {
+    const columnArray = Array.from(columns);
+    const currentIndex = columnArray.indexOf(activeColumn);
+
+    const newIndex = currentIndex + direction;
+    if (newIndex < 0 || newIndex >= columnArray.length) return;
+
+    const newColumn = columnArray[newIndex];
+    const firstTask = newColumn.querySelector(".task");
+
+    if (firstTask) {
+        firstTask.focus();
+    }
+
+    activeColumn = newColumn;
+}
+
