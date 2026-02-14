@@ -16,7 +16,29 @@ function initializeDragAndDrop($columns, handleDrop) {
             if (draggedTaskId === null) return;
 
             const columnName = $column.dataset.column;
-            handleDrop(draggedTaskId, columnName);
+            const allTaskElements = [...$taskContainer.querySelectorAll(".task")];
+            const otherTaskElements = allTaskElements.filter(el => el.dataset.taskId !== String(draggedTaskId));
+            const targetTask = e.target.closest(".task");
+
+            let insertIndex;
+            if (targetTask && targetTask.closest(".tasks") === $taskContainer) {
+                if (targetTask.dataset.taskId === String(draggedTaskId)) {
+                    insertIndex = allTaskElements.findIndex(el => el.dataset.taskId === String(draggedTaskId));
+                } else {
+                    const idx = otherTaskElements.indexOf(targetTask);
+                    if (idx === -1) {
+                        insertIndex = otherTaskElements.length;
+                    } else {
+                        const rect = targetTask.getBoundingClientRect();
+                        const mid = rect.top + rect.height / 2;
+                        insertIndex = e.clientY < mid ? idx : idx + 1;
+                    }
+                }
+            } else {
+                insertIndex = otherTaskElements.length;
+            }
+
+            handleDrop(draggedTaskId, columnName, insertIndex);
             draggedTaskId = null;
         });
     });

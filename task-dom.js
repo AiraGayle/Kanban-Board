@@ -72,6 +72,7 @@ function displayTasks($columns, tasks, createTaskElementFn) {
 
         tasks
             .filter(task => task.column === columnName)
+            .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
             .forEach(task => $taskContainer.appendChild(createTaskElementFn(task)));
     });
 }
