@@ -135,8 +135,8 @@ function showEditForm(taskId, $column) {
 }
 
 function setupDragAndDrop() {
-    initializeDragAndDrop($columns, (taskId, columnName) => {
-        tasks = moveTask(tasks, taskId, columnName);
+    initializeDragAndDrop($columns, (taskId, columnName, insertIndex) => {
+        tasks = moveTaskToPosition(tasks, taskId, columnName, insertIndex);
         saveTasks(tasks);
         refreshTaskDisplay();
     });
