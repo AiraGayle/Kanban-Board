@@ -28,7 +28,7 @@ body {
     min-height: 100vh;
 }
 
-h1 {
+.container__title {
     margin: 2rem 0;
     text-align: center;
 }
@@ -44,30 +44,17 @@ button:hover {
     opacity: 1;
 }
 
-.add-btn {
-    background: var(--text-color);
-    color: var(--bg-color);
-    width: 1.2rem;
-    height: 1.2rem;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.9rem;
-    opacity: 0.5;
-}
-
 .container {
     width: 90%;
     margin: 0 auto;
 }
 
-.container-columns {
+.container__columns {
     display: flex;
     flex-direction: row;
     gap: 1rem;
     justify-content: space-around;
-    flex-wrap: wrap; 
+    flex-wrap: wrap;
     align-items: flex-start;
 }
 
@@ -83,7 +70,7 @@ button:hover {
     overflow: hidden;
 }
 
-.column-header {
+.column__header {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -91,23 +78,33 @@ button:hover {
     border-radius: 12px 12px 0 0;
 }
 
-.column-header h3 {
+.column__title {
     margin: 0.7rem 1rem;
 }
 
-.column-header .add-btn {
+.column__add-button {
     margin: 0.7rem 1rem;
+    background: var(--text-color);
+    color: var(--bg-color);
+    width: 1.2rem;
+    height: 1.2rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    opacity: 0.5;
 }
 
-.column[data-column="to-do"] .column-header {
+.column__header--todo {
     background: var(--todo-color);
 }
 
-.column[data-column="doing"] .column-header {
+.column__header--doing {
     background: var(--doing-color);
 }
 
-.column[data-column="done"] .column-header {
+.column__header--done {
     background: var(--done-color);
 }
 
@@ -149,19 +146,19 @@ button:hover {
     gap: 0.5rem;
 }
 
-.task-note {
+.task__note {
     font-size: 0.75rem;   
     color: var(--note-color);         
     padding: 0 0.5rem 0 0.5rem;
 }
 
-.task-title,
-.task-note {
+.task__title,
+.task__note {
     word-wrap: break-word;   
     white-space: normal;   
 }
 
-.task-priority {
+.task__priority {
     margin: 0;
     padding: 0.4rem 0.6rem;
     font-size: 0.8rem;
@@ -171,27 +168,27 @@ button:hover {
     border-left: 4px solid;
 }
 
-.task-priority.high {
+.task__priority--high {
     border-left-color: var(--high-color);
 }
 
-.task-priority.medium {
+.task__priority--medium {
     border-left-color: var(--medium-color);
 }
 
-.task-priority.low {
+.task__priority--low {
     border-left-color: var(--low-color);
 }
 
-.task-actions {
+.task__actions {
     display: flex;
     gap: 0.4rem;
     justify-content: flex-end;
     margin-top: 0.3rem;
 }
 
-.edit-btn,
-.delete-btn {
+.task__edit-button,
+.task__delete-button {
     padding: 0.3rem 0.6rem;
     font-size: 0.75rem;
     border-radius: 3px;
@@ -200,16 +197,16 @@ button:hover {
     background: #3f425f;
 }
 
-.edit-btn:hover,
-.delete-btn:hover {
+.task__edit-button:hover,
+.task__delete-button:hover {
     background: #4b4d6e;
 }
 
-.delete-btn {
+.task__delete-button {
     background: #5f3f3f;
 }
 
-.delete-btn:hover {
+.task__delete-button:hover {
     background: #6e4b4b;
 }
 
