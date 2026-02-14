@@ -6,49 +6,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kanban Board</title>
     <link rel="stylesheet" href="style.css">
-    <script src="script.js" defer></script>
+    <script src="storage-service.js" defer></script>
+    <script src="task-service.js" defer></script>
+    <script src="task-dom.js" defer></script>
+    <script src="drag-drop-service.js" defer></script>
+    <script src="keyboard-shortcuts.js" defer></script>
+    <script src="main.js" defer></script>
 </head>
  <body>
     <div class="container">
-        <h1>Kanbanzawa, Hyacinth Marie</h1>
-        <div class="container-columns">
+        <h1 class="container__title">Kanbanzawa, Hyacinth Marie</h1>
+        <div class="container__columns">
 
             <div class="column" data-column="to-do">
-                <div class="column-header">
-                    <h3>To do</h3>
-                    <button class="add-btn" aria-label="Add Task">+</button>
+                <div class="column__header column__header--todo">
+                    <h3 class="column__title">To do</h3>
+                    <button class="column__add-button" aria-label="Add Task">+</button>
                 </div>
                 <div class="add-task-section" hidden>
-            <input type="text" placeholder="Enter Task" class="task-name-form">
-            <textarea placeholder="Add a note" class="task-note-form"></textarea>
-            <div class="priority-row">
-                <label for="priority">Priority:</label>
-                <select class="task-priority-input" id="priority">
-                    <option value="Low" selected>Low</option>
-                    <option value="Medium">Medium</option>
-                    <option value="High">High</option>
-                </select>
-            </div>
-            <div class="form-actions">
-                <button class="cancel-btn" type="button">Cancel</button>
-                <button class="confirm-btn" type="button">Add Task</button>
-            </div>
-        </div>
+                    <input type="text" placeholder="Enter Task" class="task-name-form">
+                    <textarea placeholder="Add a note" class="task-note-form"></textarea>
+                    <div class="priority-row">
+                        <label for="priority">Priority:</label>
+                        <select class="task-priority-input" id="priority">
+                            <option value="Low" selected>Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button class="cancel-btn" type="button">Cancel</button>
+                        <button class="confirm-btn" type="button">Add Task</button>
+                    </div>
+                </div>
                 <div class="tasks"></div>
             </div>
 
             <div class="column" data-column="doing">
-                <div class="column-header">
-                    <h3>Doing</h3>
-                    <button class="add-btn" aria-label="Add Task">+</button>
+                <div class="column__header column__header--doing">
+                    <h3 class="column__title">Doing</h3>
+                    <button class="column__add-button" aria-label="Add Task">+</button>
                 </div>
                 <div class="tasks"></div>
             </div>
 
             <div class="column" data-column="done">
-                <div class="column-header">
-                    <h3>Done</h3>
-                    <button class="add-btn">+</button>
+                <div class="column__header column__header--done">
+                    <h3 class="column__title">Done</h3>
+                    <button class="column__add-button" aria-label="Add Task">+</button>
                 </div>
                 <div class="tasks"></div>
             </div>
@@ -56,7 +61,7 @@
     </div>
 
     <!-- Template for Adding Tasks Section -->
-     <template id="add-task-form-template">
+    <template id="ADD_TASK_FORM_TEMPLATE">
         <div class="add-task-section" hidden>
             <input type="text" placeholder="Enter Task" class="task-name-form">
             <textarea placeholder="Add a note" class="task-note-form"></textarea>
@@ -76,7 +81,7 @@
     </template>
 
     <!-- Template for Editing Tasks Section -->
-    <template id="edit-task-form-template">
+    <template id="EDIT_TASK_FORM_TEMPLATE">
         <div class="edit-task-section" hidden>
             <input type="text" placeholder="Enter Task" class="edit-task-name-form">
             <textarea placeholder="Add a note" class="edit-task-note-form"></textarea>
