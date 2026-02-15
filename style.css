@@ -1,18 +1,74 @@
 /* Kanban Board Design */
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
-:root{
-    --bg-color: #171b36;
-    --column-color: #40445f; 
-    --todo-color: #e2435a;
-    --doing-color: #fdac41;
-    --done-color: #02c777;
-    --text-color: #fcffff;
+:root{ 
     --note-color: #b0b0b0;
+}
+
+/* Dark Mode */
+body.dark-mode {
     --low-color: #4274c5;
     --medium-color: #ffcc00;
     --high-color: #c72f2f;
+    --todo-color: #e2435a;
+    --doing-color: #fdac41;
+    --done-color: #02c777;
+    --bg-color: #171b36;       
+    --column-color: #40445f;            
+    --text-color: #fcffff;        
+    --input-bg: #ffffff08;       
+    --input-text: #fcffff;         
+    --input-border: #ffffff1f;  
+    --edit-btn: #3f425f;  
+    --edit-btn-hover: #4b4d6e;
+    --btn-text: #fcffff;
+    --delete-btn: #5f3f3f;
+    --delete-btn-hover: #6e4b4b;
+    --add-section-bg: #ffffff08; 
+    --text-area: #fcffff;
+    --edit-text-color: #171b36;
+    --focus-color: #171b36;
+    --cancel-btn: #3a3d63;
+    --cancel-btn-hover: #4b4d6e;  
+    --confirm-btn: #2c2f4a;
+    --confirm-btn-hover: #383b5c;
+    --border-color: #ffffff1f;    
+    --add-btn-bg: #fcffff;            
+    --add-btn-text: #171b36;          
 }
+
+/* Light Mode */
+body.light-mode {
+    --low-color: #4a90e2;      
+    --medium-color: #f5a623;   
+    --high-color: #e94e4e;      
+    --todo-color: #f28b8b;    
+    --doing-color: #f7c47a;  
+    --done-color: #7bd8a6; 
+    --bg-color: #ffffff;        
+    --column-color: #ecebeb;      
+    --text-color: #1e1e1e;        
+    --input-bg: #ffffff;         
+    --input-text: #1e1e1e;        
+    --input-border: #c0c0c0; 
+    --edit-btn: #6b6fc0;          
+    --edit-btn-hover: #5f63a8;
+    --btn-text: #ffffff;
+    --delete-btn: #d87c7c;        
+    --delete-btn-hover: #c76666;
+    --add-section-bg: #e2e2e2;
+    --text-area: #ffffff;
+    --edit-text-color: #1e1e1e;
+    --focus-color: #909097;
+    --cancel-btn: #81a4ff;          
+    --cancel-btn-hover: #6b8fff;
+    --confirm-btn: #4a75ff;         
+    --confirm-btn-hover: #3b5dcc;
+    --border-color: #c0c0c0;         
+    --add-btn-bg: #fcffff;       
+    --add-btn-text: #171b36;         
+}
+
 
 * {
     font-family: "Montserrat", sans-serif;
@@ -84,8 +140,8 @@ button:hover {
 
 .column__add-button {
     margin: 0.7rem 1rem;
-    background: var(--text-color);
-    color: var(--bg-color);
+    background: var(--add-btn-bg);
+    color: var(--add-btn-text);
     width: 1.2rem;
     height: 1.2rem;
     border-radius: 50%;
@@ -192,22 +248,22 @@ button:hover {
     padding: 0.3rem 0.6rem;
     font-size: 0.75rem;
     border-radius: 3px;
-    border: 1px solid #ffffff1f;
-    color: var(--text-color);
-    background: #3f425f;
+    border: 1px solid var(--border-color);
+    color: var(--btn-text);
+    background: var(--edit-btn)
 }
 
 .task__edit-button:hover,
 .task__delete-button:hover {
-    background: #4b4d6e;
+    background: var(--edit-btn-hover);
 }
 
 .task__delete-button {
-    background: #5f3f3f;
+    background: var(--delete-btn);
 }
 
 .task__delete-button:hover {
-    background: #6e4b4b;
+    background: var(--delete-btn-hover);
 }
 
 .add-task-section[hidden] {
@@ -215,8 +271,8 @@ button:hover {
 }
 
 .add-task-section:not([hidden]) {
-    background: #ffffff08; 
-    border: 1px solid #ffffff14;
+    background: var(--add-section-bg);
+    border: 1px solid var(--border-color);
     border-radius: 4px;
     padding: 1rem;
     margin: 0.6rem;
@@ -230,8 +286,8 @@ button:hover {
 }
 
 .edit-task-section:not([hidden]) {
-    background: #ffffff08; 
-    border: 1px solid #ffffff14;
+    background:var(--add-section-bg);
+    border: 1px solid var(--border-color);
     border-radius: 4px;
     padding: 1rem;
     margin: 0.6rem;
@@ -244,9 +300,9 @@ button:hover {
 .add-task-section textarea,
 .add-task-section select {
     width: 100%;
-    background: var(--text-color);
-    color: var(--bg-color);
-    border: 1px solid #ffffff1f;
+    background: var(--text-area);
+    color: var(--edit-text-color);
+    border: 1px solid var(--border-color);
     border-radius: 4px;
     padding: 0.45rem 0.6rem;
     font-size: 0.85rem;
@@ -256,9 +312,9 @@ button:hover {
 .edit-task-section textarea,
 .edit-task-section select {
     width: 100%;
-    background: var(--text-color);
-    color: var(--bg-color);
-    border: 1px solid #ffffff1f;
+    background: var(--text-area);
+    color: var(--edit-text-color);
+    border: 1px solid var(--border-color);
     border-radius: 4px;
     padding: 0.45rem 0.6rem;
     font-size: 0.85rem;
@@ -271,14 +327,14 @@ button:hover {
 .task-name-form:focus,
 .task-note-form:focus,
 .task-priority-input:focus {
-    outline: 2px solid var(--bg-color);
+    outline: 2px solid var(--focus-color);
 }
 
 .edit-task-name-form:focus,
 .edit-task-note-form:focus,
 .edit-task-priority-input:focus,
 .edit-task-column-input:focus {
-    outline: 2px solid var(--bg-color);
+    outline: 2px solid var(--focus-color);
 }
 
 .add-task-section input::placeholder,
@@ -327,47 +383,47 @@ button:hover {
 }
 
 .cancel-btn { 
-    background: #3f425f;
-    border: 1px solid #3a3d63;
-    color: var(--text-color);
+    background: var(--cancel-btn);
+    border: 1px solid var(--border-color);
+    color: var(--btn-text);
 }
 
 .cancel-btn:hover, 
 .cancel-btn:focus {
-    background: #4b4d6e;     
+    background: var(--cancel-btn-hover);   
 }
 
 .confirm-btn {
-    background-color: #2c2f4a; 
+    background-color: var(--confirm-btn); 
     border: 1px solid #3a3d63;
-    color: var(--text-color);
+    color: var(--btn-text);;
 }
 
 .confirm-btn:hover, 
 .confirm-btn:focus {
-    background: #383b5c;      
+    background: var(--confirm-btn-hover);
 }
 
 .edit-cancel-btn { 
-    background: #3f425f;
-    border: 1px solid #3a3d63;
-    color: var(--text-color);
+    background: var(--cancel-btn);
+    border: 1px solid var(--border-color);
+    color: var(--btn-text);
 }
 
 .edit-cancel-btn:hover, 
 .edit-cancel-btn:focus {
-    background: #4b4d6e;     
+    background: var(--cancel-btn-hover);        
 }
 
 .edit-confirm-btn {
-    background-color: #2c2f4a; 
-    border: 1px solid #3a3d63;
-    color: var(--text-color);
+    background-color: var(--confirm-btn);
+    border: 1px solid var(--border-color);
+    color: var(--btn-text);
 }
 
 .edit-confirm-btn:hover, 
 .edit-confirm-btn:focus {
-    background: #383b5c;      
+    background: var(--confirm-btn-hover);
 }
 
 
