@@ -76,12 +76,6 @@ function createTaskElement(task) {
         DragAndDrop(); // i made this into a function to follow "clean code"....yay or nay? 
     });
 
-    //for keyboard shortcut
-    div.addEventListener("focus", () => {
-    selectedTaskId = task.id;
-    activeColumn = div.closest(".column");
-    });
-
     return div;
 }
 
@@ -228,7 +222,7 @@ class KeyboardManager {
 
         this.init();
     }
-
+    
     init() {
         document.addEventListener("click", (e) => {
             const column = e.target.closest(".column");
