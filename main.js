@@ -140,6 +140,13 @@ function setupDragAndDrop() {
         saveTasks(tasks);
         refreshTaskDisplay();
     });
+    
+    document.addEventListener("taskDrop", (e) => {
+        const { taskId, columnName, insertIndex } = e.detail;
+        tasks = moveTaskToPosition(tasks, taskId, columnName, insertIndex);
+        saveTasks(tasks);
+        refreshTaskDisplay();
+    });
 }
 
 function setupKeyboardShortcuts() {
