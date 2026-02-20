@@ -214,5 +214,12 @@ function refreshTaskDisplay() {
     displayTasks($columns, tasks, createTaskElementFn);
 }
 
+// Expose a global function for move buttons
+window.moveTaskButton = function(taskId, newColumn) {
+    tasks = moveTask(tasks, taskId, newColumn);
+    saveTasks(tasks);
+    refreshTaskDisplay();
+};
+
 // Start the app when DOM is ready
 document.addEventListener("DOMContentLoaded", initializeApp);

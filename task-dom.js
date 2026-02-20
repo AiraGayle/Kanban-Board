@@ -42,6 +42,36 @@ function createTaskElement(task, handleEdit, handleDelete, handleDragStart, hand
 
     $actionsDiv.appendChild($editBtn);
     $actionsDiv.appendChild($deleteBtn);
+
+    // Move buttons for task in mobileview
+    const columns = ['to-do', 'doing', 'done'];
+    const currentIndex = columns.indexOf(task.column);
+    if (window.matchMedia && window.matchMedia('(max-width: 700px)').matches) {
+        // Move Left
+        if (currentIndex > 0) {
+            const $moveLeftBtn = document.createElement('button');
+            $moveLeftBtn.className = 'task__move-left mobile-move-btn';
+            $moveLeftBtn.textContent = '<';
+            $moveLeftBtn.title = 'Move left';
+            $moveLeftBtn.onclick = (e) => {
+                e.stopPropagation();
+                window.moveTaskButton && window.moveTaskButton(task.id, columns[currentIndex - 1]);
+            };
+            $actionsDiv.appendChild($moveLeftBtn);
+        }
+        // Move Right
+        if (currentIndex < columns.length - 1) {
+            const $moveRightBtn = document.createElement('button');
+            $moveRightBtn.className = 'task__move-right mobile-move-btn';
+            $moveRightBtn.textContent = '>';
+            $moveRightBtn.title = 'Move right';
+            $moveRightBtn.onclick = (e) => {
+                e.stopPropagation();
+                window.moveTaskButton && window.moveTaskButton(task.id, columns[currentIndex + 1]);
+            };
+            $actionsDiv.appendChild($moveRightBtn);
+        }
+    }
     $taskDiv.appendChild($actionsDiv);
 
     $editBtn.addEventListener("click", () => {
@@ -80,3 +110,4 @@ function displayTasks($columns, tasks, createTaskElementFn) {
 function getColumns() {
     return document.querySelectorAll(COLUMN_SELECTOR);
 }
+
