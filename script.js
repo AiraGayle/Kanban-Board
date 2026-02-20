@@ -6,10 +6,6 @@ let draggedTask = null;
 const addTaskFormTemplate = document.querySelector("#add-task-form-template");
 const editTaskFormTemplate = document.querySelector("#edit-task-form-template");
 
-//Keyboard shortcuts 
-let activeColumn = null;
-let selectedTaskId = null;
-
 
 
 // Save Tasks
@@ -170,25 +166,6 @@ function updateTask(taskId, title, note, priority) {
     }
 }
 
-//move task - keyboard shortcut
-function moveTask(direction) {
-    if (!activeColumn || !selectedTaskId) return;
-
-    const columnArray = Array.from(columns);
-    const currentIndex = columnArray.indexOf(activeColumn);
-    const newIndex = currentIndex + direction;
-
-    if (newIndex < 0 || newIndex >= columnArray.length) return;
-
-    const task = tasks.find(t => t.id === selectedTaskId);
-    if (!task) return;
-
-    task.column = columnArray[newIndex].dataset.column;
-
-    saveTask();
-    displayTasks();
-}
-
 // Show edit form for a task
 function showEditForm(task, column) {
     // Hide all other edit forms
@@ -237,6 +214,106 @@ function showEditForm(task, column) {
         editForm.hidden = true;
     });
 }
+
+//keyboard
+class KeyboardManager {
+    constructor(columns, tasksRef) {
+        this.columns = columns;
+        this.tasks = tasksRef;
+
+        this.activeColumn = null;
+        this.selectedTaskId = null;
+
+        this.shortcuts = this.createShortcuts();
+
+        this.init();
+    }
+
+    init() {
+        document.addEventListener("click", (e) => {
+            const column = e.target.closest(".column");
+            if (column) this.activeColumn = column;
+        });
+
+        document.addEventListener("focusin", (e) => {
+            const task = e.target.closest(".task");
+            if (task) {
+                this.selectedTaskId = Number(task.dataset.taskId);
+                this.activeColumn = task.closest(".column");
+            }
+        });
+
+        document.addEventListener("keydown", (e) => this.downKey(e));
+    }
+
+    createShortcuts() {
+        const taskMove = (dir) => () => this.moveTask(dir);
+
+        return {
+            "alt+a": () => this.activeColumn?.querySelector(".add-btn")?.click(),
+            "alt+d": () => this.selectedTaskId && deleteTask(this.selectedTaskId),
+            "alt+e": () => {
+                if (!this.selectedTaskId) return;
+                const task = this.tasks.find(t => t.id === this.selectedTaskId);
+                if (task) showEditForm(task, this.activeColumn);
+            },
+            "alt+arrowright": taskMove(1),
+            "alt+arrowleft": taskMove(-1),
+            "arrowdown": () => this.verticalMove(1),
+            "arrowup": () => this.verticalMove(-1),
+            "arrowright": () => this.focusMove(1),
+            "arrowleft": () => this.focusMove(-1),
+        };
+    }
+
+    downKey(event) {
+        if (["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement.tagName)) return;
+        if (!this.activeColumn) return;
+
+        const key = event.altKey ? `alt+${event.key.toLowerCase()}` : event.key.toLowerCase();
+        const action = this.shortcuts[key];
+        if (action) {
+            event.preventDefault();
+            action();
+        }
+    }
+
+    columnGuide(direction) {
+        const columnArray = Array.from(this.columns);
+        const newIndex = columnArray.indexOf(this.activeColumn) + direction;
+        if (newIndex < 0 || newIndex >= columnArray.length) return null;
+        return columnArray[newIndex];
+    }
+
+    verticalMove(direction) {
+        const sibling = direction > 0
+            ? document.activeElement.nextElementSibling
+            : document.activeElement.previousElementSibling;
+
+        if (sibling?.classList.contains("task")) sibling.focus();
+    }
+
+    focusMove(direction) {
+        const newColumn = this.columnGuide(direction);
+        if (!newColumn) return;
+
+        newColumn.querySelector(".task")?.focus();
+        this.activeColumn = newColumn;
+    }
+
+    moveTask(direction) {
+        const newColumn = this.columnGuide(direction);
+        if (!newColumn || !this.selectedTaskId) return;
+
+        const task = this.tasks.find(t => t.id === this.selectedTaskId);
+        if (!task) return;
+
+        task.column = newColumn.dataset.column;
+        saveTask();
+        displayTasks();
+    }
+}
+
 columns.forEach(column => {
 
     //for tracking active column - keyboard shortcut
@@ -258,9 +335,7 @@ columns.forEach(column => {
     const cancelButton = form.querySelector(".cancel-btn");
     const confirmButton = form.querySelector(".confirm-btn");
     const priorityInput = form.querySelector(".task-priority-input");
-
    
-
     // If + button is clicked
     addButton.addEventListener("click", () => {
         form.hidden = false;
@@ -301,102 +376,8 @@ columns.forEach(column => {
 });
 displayTasks();
 
-
-//keyboard shortcuts 
-document.addEventListener("keydown", handleShortcuts);
-
-function handleShortcuts(event) {
-
-    // Prevent shortcuts inside inputs
-    if (["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement.tagName)) {
-        return;
-    }
-
-    if (!activeColumn) return;
-
-    const key = event.key.toLowerCase();
-
-    // ADD TASK → alt + a
-    if (event.altKey && key === "a") {
-        event.preventDefault();
-        activeColumn.querySelector(".add-btn")?.click();
-
-    }
+const keyboard = new KeyboardManager(columns, tasks);
 
 
-    // DELETE → alt + d
-    if (event.altKey && key === "d" && selectedTaskId) {
-        event.preventDefault();
-        deleteTask(selectedTaskId);
-    }
 
-    // EDIT → alt + e
-    if (event.altKey && key === "e" && selectedTaskId) {
-        event.preventDefault();
-        const task = tasks.find(t => t.id === selectedTaskId);
-        if (task) showEditForm(task, activeColumn);
-    }
-
-    // MOVE RIGHT → alt + →
-    if (event.altKey && event.key === "ArrowRight") {
-        event.preventDefault();
-        moveTask(1);
-    }
-
-    // MOVE LEFT → alt + ←
-    if (event.altKey && event.key === "ArrowLeft") {
-        event.preventDefault();
-        moveTask(-1);
-    }
-
-    if (event.key === "ArrowDown") {
-    event.preventDefault();
-
-    const current = document.activeElement;
-    const next = current.nextElementSibling;
-
-    if (next && next.classList.contains("task")) {
-        next.focus();
-    }
-    }
-
-    if (event.key === "ArrowUp") {
-        event.preventDefault();
-
-        const current = document.activeElement;
-        const prev = current.previousElementSibling;
-
-        if (prev && prev.classList.contains("task")) {
-            prev.focus();
-        }
-    }
-
-    if (event.key === "ArrowRight" && !event.ctrlKey) {
-    event.preventDefault();
-    moveFocusColumn(1);
-    }
-
-    if (event.key === "ArrowLeft" && !event.ctrlKey) {
-        event.preventDefault();
-        moveFocusColumn(-1);
-    }
-
-}
-
-function moveFocusColumn(direction) {
-    const columnArray = Array.from(columns);
-    const currentIndex = columnArray.indexOf(activeColumn);
-
-    const newIndex = currentIndex + direction;
-    if (newIndex < 0 || newIndex >= columnArray.length) return;
-
-    const newColumn = columnArray[newIndex];
-    const firstTask = newColumn.querySelector(".task");
-
-    if (firstTask) {
-        firstTask.focus();
-    }
-
-    activeColumn = newColumn;
-}
 
