@@ -1,15 +1,22 @@
 // Main - Initialize and coordinate the Kanban Board
+import Board from "./Board.js";
+import Column from "./Column.js";
 
 // State
-let tasks = loadTasks();
+const board = new Board(["to-do", "doing", "done"]);
 let selectedColumn = null;
 let selectedTaskId = null;
+
 const $columns = getColumns();
 const $addTaskFormTemplate = document.querySelector("#ADD_TASK_FORM_TEMPLATE");
 const $editTaskFormTemplate = document.querySelector("#EDIT_TASK_FORM_TEMPLATE");
 
 // Initialize the application
 function initializeApp() {
+    const savedTasks = loadTasks();
+    if (savedTasks.length > 0) {
+        board.setTasks(savedTasks);
+    }
     setupAddTaskForms();
     setupEditTaskForms();
     setupColumnListeners();
@@ -44,6 +51,7 @@ function setupAddTaskForms() {
         $addButton.addEventListener("click", () => {
             $form.hidden = false;
             $titleInput.focus();
+            console.log("click")
         });
 
         $cancelButton.addEventListener("click", () => {
@@ -53,15 +61,14 @@ function setupAddTaskForms() {
         $confirmButton.addEventListener("click", () => {
             if ($titleInput.value.trim() === "") return;
 
-            tasks = createNewTask(
-                tasks,
+            board.addTask(
                 $titleInput.value,
                 $noteInput.value,
                 $column.dataset.column,
                 $priorityInput.value
             );
 
-            saveTasks(tasks);
+            saveTasks(board.getAllTasks());
             resetAddForm($form, $titleInput, $noteInput, $priorityInput);
             refreshTaskDisplay();
         });
@@ -86,7 +93,7 @@ function setupEditTaskForms() {
 }
 
 function showEditForm(taskId, $column) {
-    const task = findTaskById(tasks, taskId);
+    const task = board.getTask(taskId)
     if (!task) return;
 
     document.querySelectorAll(".edit-task-section:not([hidden])").forEach($form => {
@@ -116,15 +123,14 @@ function showEditForm(taskId, $column) {
     $newConfirmButton.addEventListener("click", () => {
         if ($editTitleInput.value.trim() === "") return;
 
-        tasks = updateTask(
-            tasks,
+        board.updateTask(
             taskId,
             $editTitleInput.value,
             $editNoteInput.value,
             $editPriorityInput.value
         );
 
-        saveTasks(tasks);
+        saveTasks(board.getAllTasks());
         $editForm.hidden = true;
         refreshTaskDisplay();
     });
@@ -136,8 +142,8 @@ function showEditForm(taskId, $column) {
 
 function setupDragAndDrop() {
     initializeDragAndDrop($columns, (taskId, columnName, insertIndex) => {
-        tasks = moveTaskToPosition(tasks, taskId, columnName, insertIndex);
-        saveTasks(tasks);
+        board.moveTask(taskId, columnName, insertIndex)
+        saveTasks(board.getAllTasks());
         refreshTaskDisplay();
     });
 }
@@ -146,8 +152,8 @@ function setupKeyboardShortcuts() {
     initializeKeyboardShortcuts((event) => {
         const callbacks = {
             onDelete: (taskId) => {
-                tasks = deleteTask(tasks, taskId);
-                saveTasks(tasks);
+                tasks = Board.deleteTask(taskId);
+                saveTasks(board.getAllTasks());
                 refreshTaskDisplay();
             },
             onEdit: (taskId, $column) => {
@@ -161,8 +167,8 @@ function setupKeyboardShortcuts() {
 
                     if (newIndex < columnArray.length) {
                         const newColumnName = columnArray[newIndex].dataset.column;
-                        tasks = moveTask(tasks, selectedTaskId, newColumnName);
-                        saveTasks(tasks);
+                       board.moveTask(selectedTaskId, newColumnName);
+                        saveTasks(board.getAllTasks());
                         refreshTaskDisplay();
                     }
                 }
@@ -175,8 +181,8 @@ function setupKeyboardShortcuts() {
 
                     if (newIndex >= 0) {
                         const newColumnName = columnArray[newIndex].dataset.column;
-                        tasks = moveTask(tasks, selectedTaskId, newColumnName);
-                        saveTasks(tasks);
+                        board.moveTask(selectedTaskId, newColumnName);
+                        saveTasks(board.getAllTasks());
                         refreshTaskDisplay();
                     }
                 }
@@ -199,8 +205,8 @@ function refreshTaskDisplay() {
             task,
             (taskObj, $col) => showEditForm(taskObj.id, $col),
             (taskId) => {
-                tasks = deleteTask(tasks, taskId);
-                saveTasks(tasks);
+                board.deleteTask(taskId);
+                saveTasks(board.getAllTasks());
                 refreshTaskDisplay();
             },
             (taskId) => setDraggedTaskId(taskId),
@@ -211,13 +217,13 @@ function refreshTaskDisplay() {
         );
     };
 
-    displayTasks($columns, tasks, createTaskElementFn);
+    displayTasks($columns, board.getAllTasks(), createTaskElementFn);
 }
 
 // Expose a global function for move buttons
 window.moveTaskButton = function(taskId, newColumn) {
-    tasks = moveTask(tasks, taskId, newColumn);
-    saveTasks(tasks);
+    board.moveTask(taskId, newColumn);
+    saveTasks(board.getAllTasks());
     refreshTaskDisplay();
 };
 
