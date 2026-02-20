@@ -143,8 +143,32 @@ function setupDragAndDrop() {
 }
 
 function setupKeyboardShortcuts() {
-    initializeKeyboardShortcuts((event) => {
-        const callbacks = {
+    // Helper for moving task between columns
+    const moveTaskDirection = (direction) => {
+        if (!selectedTaskId) return;
+
+        const columnArray = Array.from($columns);
+        const currentIndex = columnArray.indexOf(selectedColumn);
+        const newIndex = currentIndex + direction;
+
+        if (newIndex >= 0 && newIndex < columnArray.length) {
+            const newColumnName = columnArray[newIndex].dataset.column;
+            tasks = moveTask(tasks, selectedTaskId, newColumnName);
+            saveTasks(tasks);
+            refreshTaskDisplay();
+        }
+    };
+
+    // Helper for moving column focus
+    const moveColumnDirection = (direction) => {
+        selectedColumn = moveFocusBetweenColumns($columns, selectedColumn, direction) || selectedColumn;
+    };
+
+    initializeKeyboardShortcuts({
+        $columns: $columns,
+        getSelectedTaskId: () => selectedTaskId,
+        getSelectedColumn: () => selectedColumn,
+        callbacks: {
             onDelete: (taskId) => {
                 tasks = deleteTask(tasks, taskId);
                 saveTasks(tasks);
@@ -153,46 +177,13 @@ function setupKeyboardShortcuts() {
             onEdit: (taskId, $column) => {
                 showEditForm(taskId, $column);
             },
-            onMoveRight: () => {
-                if (selectedTaskId) {
-                    const columnArray = Array.from($columns);
-                    const currentIndex = columnArray.indexOf(selectedColumn);
-                    const newIndex = currentIndex + 1;
-
-                    if (newIndex < columnArray.length) {
-                        const newColumnName = columnArray[newIndex].dataset.column;
-                        tasks = moveTask(tasks, selectedTaskId, newColumnName);
-                        saveTasks(tasks);
-                        refreshTaskDisplay();
-                    }
-                }
-            },
-            onMoveLeft: () => {
-                if (selectedTaskId) {
-                    const columnArray = Array.from($columns);
-                    const currentIndex = columnArray.indexOf(selectedColumn);
-                    const newIndex = currentIndex - 1;
-
-                    if (newIndex >= 0) {
-                        const newColumnName = columnArray[newIndex].dataset.column;
-                        tasks = moveTask(tasks, selectedTaskId, newColumnName);
-                        saveTasks(tasks);
-                        refreshTaskDisplay();
-                    }
-                }
-            },
-            onMoveColumnRight: () => {
-                selectedColumn = moveFocusBetweenColumns($columns, selectedColumn, 1) || selectedColumn;
-            },
-            onMoveColumnLeft: () => {
-                selectedColumn = moveFocusBetweenColumns($columns, selectedColumn, -1) || selectedColumn;
-            }
-        };
-
-        handleKeyboardInput(event, $columns, selectedColumn, selectedTaskId, callbacks);
+            onMoveRight: () => moveTaskDirection(1),
+            onMoveLeft: () => moveTaskDirection(-1),
+            onMoveColumnRight: () => moveColumnDirection(1),
+            onMoveColumnLeft: () => moveColumnDirection(-1),
+        }
     });
 }
-
 function refreshTaskDisplay() {
     const createTaskElementFn = (task) => {
         return createTaskElement(
