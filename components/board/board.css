@@ -1,0 +1,26 @@
+.board {
+    width: 90%;
+    margin: 0 auto;
+}
+
+.board__title {
+    margin: 2rem 0 0;
+    text-align: center;
+}
+
+.board__columns {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    align-items: flex-start;
+}
+
+.board__shortcuts {
+    text-align: center;
+    font-size: 0.7rem;
+    color: var(--note-color);
+    margin-bottom: 1.2rem;
+    opacity: 0.7;
+}

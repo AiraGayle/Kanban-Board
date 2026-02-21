@@ -4,61 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kanban Board</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="storage-service.js" defer></script>
-    <script src="task-service.js" defer></script>
-    <script src="task-dom.js" defer></script>
-    <script src="drag-drop-service.js" defer></script>
-    <script src="keyboard.js" defer></script>
-    <script src="light-dark-theme.js" defer></script>
-    <script type="module" src="main.js" defer></script>
+    <link rel="stylesheet" href="styles/base.css">
+    <link rel="stylesheet" href="components/board/board.css">
+    <link rel="stylesheet" href="components/column/column.css">
+    <link rel="stylesheet" href="components/card/card.css">
+    <script defer src="utils/dom-utils.js"></script>
+    <script defer src="services/storage-service.js"></script>
+    <script defer src="services/task-service.js"></script>
+    <script defer src="components/card/card.js"></script>
+    <script defer src="components/card/card-view.js"></script>
+    <script defer src="components/card/card-edit.js"></script>
+    <script defer src="components/card/card-drag.js"></script>
+    <script defer src="components/column/column.js"></script>
+    <script defer src="components/board/board.js"></script>
+    <script defer src="components/board/board-callbacks.js"></script>
+    <script defer src="components/board/board-tasks.js"></script>
+    <script defer src="components/board/board-keyboard.js"></script>
+    <script defer src="main.js"></script>
 </head>
 <body>
-    <div class="container">
-        <h1 class="container__title">Kanban Board</h1>
-        <div class="container__columns" id="COLUMNS_CONTAINER"></div>
+    <div class="board">
+        <h1 class="board__title">Kanban Board</h1>
+        <p class="board__shortcuts">
+            Alt+A: Add &nbsp;|&nbsp; Alt+E: Edit &nbsp;|&nbsp; Alt+D: Delete &nbsp;|&nbsp;
+            Alt+←/→: Move card &nbsp;|&nbsp; ←/→: Switch column &nbsp;|&nbsp; ↑/↓: Navigate cards
+        </p>
+        <div class="board__columns" id="BOARD_COLUMNS"></div>
     </div>
-
-    <template id="COLUMN_TEMPLATE">
-        <div class="column" data-column="">
-            <div class="column__header">
-                <h3 class="column__title"></h3>
-                <button class="column__add-button" aria-label="Add Task">+</button>
-            </div>
-            <div class="add-task-section" hidden>
-                <input type="text" placeholder="Enter Task" class="task-name-form">
-                <textarea placeholder="Add a note" class="task-note-form"></textarea>
-                <div class="priority-row">
-                    <label for="priority">Priority:</label>
-                    <select class="task-priority-input" id="priority">
-                        <option value="Low" selected>Low</option>
-                        <option value="Medium">Medium</option>
-                        <option value="High">High</option>
-                    </select>
-                </div>
-                <div class="form-actions">
-                    <button class="cancel-btn" type="button">Cancel</button>
-                    <button class="confirm-btn" type="button">Add Task</button>
-                </div>
-            </div>
-            <div class="edit-task-section" hidden>
-                <input type="text" placeholder="Enter Task" class="edit-task-name-form">
-                <textarea placeholder="Add a note" class="edit-task-note-form"></textarea>
-                <div class="priority-row">
-                    <label for="edit-priority">Priority:</label>
-                    <select class="edit-task-priority-input" id="edit-priority">
-                        <option value="Low" selected>Low</option>
-                        <option value="Medium">Medium</option>
-                        <option value="High">High</option>
-                    </select>
-                </div>
-                <div class="form-actions">
-                    <button class="edit-cancel-btn" type="button">Cancel</button>
-                    <button class="edit-confirm-btn" type="button">Update Task</button>
-                </div>
-            </div>
-            <div class="tasks"></div>
-        </div>
-    </template>
 </body>
 </html>

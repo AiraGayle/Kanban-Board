@@ -1,0 +1,179 @@
+.card {
+    width: calc(100% - 2rem);
+    margin: 0.1rem 0.5rem;
+    padding: 1rem;
+    background: var(--bg-color);
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    gap: 0.5rem;
+}
+
+.card:focus {
+    outline: 2px solid #4caf50;
+    outline-offset: 1px;
+}
+
+.card__title {
+    word-wrap: break-word;
+    white-space: normal;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.card__note {
+    font-size: 0.75rem;
+    color: var(--note-color);
+    padding: 0 0.5rem;
+    word-wrap: break-word;
+    white-space: normal;
+    margin-bottom: 0.5rem;
+}
+
+.card__priority {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.8rem;
+    border-radius: 3px;
+    background-color: var(--column-color);
+    width: fit-content;
+    border-left: 4px solid transparent;
+}
+
+.card__priority--high {
+    border-left-color: var(--high-color);
+}
+
+.card__priority--medium {
+    border-left-color: var(--medium-color);
+}
+
+.card__priority--low {
+    border-left-color: var(--low-color);
+}
+
+.card__actions {
+    display: flex;
+    gap: 0.4rem;
+    justify-content: flex-end;
+    margin-top: 0.3rem;
+}
+
+.card__edit-button,
+.card__delete-button {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.75rem;
+    border-radius: 3px;
+    border: 1px solid var(--border-color);
+    color: var(--btn-text);
+    background: var(--edit-btn);
+}
+
+.card__edit-button:hover {
+    background: var(--edit-btn-hover);
+}
+
+.card__delete-button {
+    background: var(--delete-btn);
+}
+
+.card__delete-button:hover {
+    background: var(--delete-btn-hover);
+}
+
+.card__view[hidden] {
+    display: none;
+}
+
+.card__edit-form[hidden] {
+    display: none;
+}
+
+.card__edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.card__edit-title,
+.card__edit-note,
+.card__edit-select {
+    width: 100%;
+    background: var(--text-area);
+    color: var(--edit-text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 0.45rem 0.6rem;
+    font-size: 0.85rem;
+    font-family: inherit;
+}
+
+.card__edit-note {
+    min-height: 60px;
+    resize: vertical;
+}
+
+.card__edit-title:focus,
+.card__edit-note:focus,
+.card__edit-select:focus {
+    outline: 2px solid var(--focus-color);
+}
+
+.card__edit-title::placeholder,
+.card__edit-note::placeholder {
+    color: gray;
+}
+
+.card__edit-title:focus::placeholder,
+.card__edit-note:focus::placeholder {
+    color: #c8c8c8;
+}
+
+.card__priority-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.card__priority-label {
+    font-size: 0.85rem;
+}
+
+.card__form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 0.2rem;
+}
+
+.card__cancel-button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+    border-radius: 4px;
+    background: var(--cancel-btn);
+    border: 1px solid var(--border-color);
+    color: var(--btn-text);
+}
+
+.card__cancel-button:hover {
+    background: var(--cancel-btn-hover);
+}
+
+.card__save-button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+    border-radius: 4px;
+    background: var(--confirm-btn);
+    border: 1px solid var(--border-color);
+    color: var(--btn-text);
+}
+
+.card__save-button:hover {
+    background: var(--confirm-btn-hover);
+}
+
+.card--dragging {
+    opacity: 0.8;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+}
