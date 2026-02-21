@@ -4,6 +4,7 @@ import Column from "./Column.js";
 
 // State
 const board = new Board(["to-do", "doing", "done"]);
+window.board = board; 
 let selectedColumn = null;
 let selectedTaskId = null;
 
@@ -142,15 +143,16 @@ function showEditForm(taskId, $column) {
 
 function setupDragAndDrop() {
     initializeDragAndDrop($columns, (taskId, columnName, insertIndex) => {
-        board.moveTask(taskId, columnName, insertIndex)
+        board.moveTask(taskId, columnName, insertIndex);
         saveTasks(board.getAllTasks());
         refreshTaskDisplay();
     });
     
     document.addEventListener("taskDrop", (e) => {
         const { taskId, columnName, insertIndex } = e.detail;
-        tasks = moveTaskToPosition(tasks, taskId, columnName, insertIndex);
-        saveTasks(tasks);
+
+        board.moveTask(taskId, columnName, insertIndex);
+        saveTasks(board.getAllTasks());
         refreshTaskDisplay();
     });
 }
@@ -227,3 +229,9 @@ window.moveTaskButton = function(taskId, newColumn) {
 
 // Start the app when DOM is ready
 document.addEventListener("DOMContentLoaded", initializeApp);
+
+window.addEventListener('resize', () => {
+    console.log("resizing");
+    addMobileMoveButtonsToAllTasks();
+    refreshTaskDisplay();
+  });

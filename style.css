@@ -452,9 +452,10 @@ button:hover {
 /* Mobile-only move buttons for tasks styled like Edit/Delete but yellow */
 @media (max-width: 700px) {
   .mobile-move-btn {
-    background: #ffe066;
-    color: #333;
-    border: 1px solid #e6c200;
+    display: inline-flex;
+    background: var(--cancel-btn);
+    color: white;
+    border: 1px solid var(--border-color);
     border-radius: 4px;
     padding: 0.3rem 0.6rem;
     font-size: 0.85rem;
@@ -465,6 +466,6 @@ button:hover {
   }
   .mobile-move-btn:active,
   .mobile-move-btn:focus {
-    background: #ffe799;
+    background: #6b8fff;
   }
 }
