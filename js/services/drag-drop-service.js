@@ -8,7 +8,7 @@ let isDragging = false;
 let dragOffset = { x: 0, y: 0 };
 let placeholder = null;
 
-function initializeDragAndDrop($columns, handleDrop) {
+export function initializeDragAndDrop($columns, handleDrop) {
     $columns.forEach($column => {
         const $taskContainer = $column.querySelector(".tasks");
 
@@ -224,18 +224,7 @@ function resetDragState() {
     touchStartX = 0;
 }
 
-function attachTouchDragHandler(taskElement) {
-    taskElement.addEventListener("touchstart", (e) => handleTouchStart(e, taskElement), { passive: false });
-}
-
-function setDraggedTaskId(taskId) {
+export function setDraggedTaskId(taskId) {
     draggedTaskId = taskId;
 }
 
-function getDraggedTaskId() {
-    return draggedTaskId;
-}
-
-function clearDraggedTaskId() {
-    draggedTaskId = null;
-}

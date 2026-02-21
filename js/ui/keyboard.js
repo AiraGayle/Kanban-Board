@@ -63,7 +63,7 @@ class KeyboardManager {
     }
 }
 
-function initializeKeyboardShortcuts(params) {
+export function initializeKeyboardShortcuts(params) {
     return new KeyboardManager(
         params.$columns,
         params.getSelectedTaskId,

@@ -56,7 +56,7 @@ window.addMobileMoveButtonsToAllTasks = addMobileMoveButtonsToAllTasks;
 /**
  * Create a task element DOM
  */
-function createTaskElement(task, handleEdit, handleDelete, handleDragStart, handleFocus) {
+export function createTaskElement(task, handleEdit, handleDelete, handleDragStart, handleFocus) {
     const $taskDiv = document.createElement("div");
     $taskDiv.className = "task";
     $taskDiv.dataset.taskId = task.id;
@@ -134,7 +134,7 @@ function createTaskElement(task, handleEdit, handleDelete, handleDragStart, hand
 /**
  * Display tasks in columns
  */
-function displayTasks($columns, tasks, createTaskElementFn) {
+export function displayTasks($columns, tasks, createTaskElementFn) {
     $columns.forEach($column => {
         const $taskContainer = $column.querySelector(".tasks");
         $taskContainer.innerHTML = "";
@@ -153,7 +153,7 @@ function displayTasks($columns, tasks, createTaskElementFn) {
 /**
  * Get all column DOM elements
  */
-function getColumns() {
+export function getColumns() {
     return document.querySelectorAll(COLUMN_SELECTOR);
 }
 

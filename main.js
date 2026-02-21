@@ -1,6 +1,12 @@
 // Main - Initialize and coordinate the Kanban Board
-import Board from "./Board.js";
-import Column from "./Column.js";
+// main.js (entry point)
+import Board from "./js/models/Board.js"
+import * as DragAndDrop from "./js/services/drag-drop-service.js";
+import * as Keyboard from "./js/ui/keyboard.js";
+import "./js/services/task-service.js";
+import * as StorageService from "./js/services/storage-service.js";
+import * as TaskDOM from "./js/ui/task-dom.js";
+import "./js/ui/light-dark-theme.js";
 
 const COLUMN_CONFIG = [
     { column: "to-do", title: "To do", headerModifier: "todo" },
@@ -16,9 +22,9 @@ let $columns;
 
 function initializeApp() {
     renderColumns();
-    $columns = getColumns();
+    $columns = TaskDOM.getColumns();
 
-    const savedTasks = loadTasks();
+    const savedTasks = StorageService.loadTasks();
     if (savedTasks.length > 0) {
         board.setTasks(savedTasks);
     }
@@ -89,7 +95,7 @@ function setupAddTaskForms() {
                 $column.dataset.column,
                 $priorityInput.value
             );
-            saveTasks(board.getAllTasks());
+            StorageService.saveTasks(board.getAllTasks());
             resetAddForm($form, $titleInput, $noteInput, $priorityInput);
             refreshTaskDisplay();
         });
@@ -141,7 +147,7 @@ function showEditForm(taskId, $column) {
             $editPriorityInput.value
         );
 
-        saveTasks(board.getAllTasks());
+        StorageService.saveTasks(board.getAllTasks());
         $editForm.hidden = true;
         refreshTaskDisplay();
     });
@@ -152,9 +158,9 @@ function showEditForm(taskId, $column) {
 }
 
 function setupDragAndDrop() {
-    initializeDragAndDrop($columns, (taskId, columnName, insertIndex) => {
+    DragAndDrop.initializeDragAndDrop($columns, (taskId, columnName, insertIndex) => {
         board.moveTask(taskId, columnName, insertIndex);
-        saveTasks(board.getAllTasks());
+        StorageService.saveTasks(board.getAllTasks());
         refreshTaskDisplay();
     });
     
@@ -162,7 +168,7 @@ function setupDragAndDrop() {
         const { taskId, columnName, insertIndex } = e.detail;
 
         board.moveTask(taskId, columnName, insertIndex);
-        saveTasks(board.getAllTasks());
+        StorageService.saveTasks(board.getAllTasks());
         refreshTaskDisplay();
     });
 }
@@ -179,7 +185,7 @@ function setupKeyboardShortcuts() {
         if (newIndex >= 0 && newIndex < columnArray.length) {
             const newColumnName = columnArray[newIndex].dataset.column;
             tasks = moveTask(tasks, selectedTaskId, newColumnName);
-            saveTasks(tasks);
+            StorageService.saveTasks(tasks);
             refreshTaskDisplay();
         }
     };
@@ -189,14 +195,14 @@ function setupKeyboardShortcuts() {
         selectedColumn = moveFocusBetweenColumns($columns, selectedColumn, direction) || selectedColumn;
     };
 
-    initializeKeyboardShortcuts({
+    Keyboard.initializeKeyboardShortcuts({
         $columns: $columns,
         getSelectedTaskId: () => selectedTaskId,
         getSelectedColumn: () => selectedColumn,
         callbacks: {
             onDelete: (taskId) => {
                 tasks = Board.deleteTask(taskId);
-                saveTasks(board.getAllTasks());
+                StorageService.saveTasks(board.getAllTasks());
                 refreshTaskDisplay();
             },
             onEdit: (taskId, $column) => {
@@ -211,15 +217,15 @@ function setupKeyboardShortcuts() {
 }
 function refreshTaskDisplay() {
     const createTaskElementFn = (task) => {
-        return createTaskElement(
+        return TaskDOM.createTaskElement(
             task,
             (taskObj, $col) => showEditForm(taskObj.id, $col),
             (taskId) => {
                 board.deleteTask(taskId);
-                saveTasks(board.getAllTasks());
+                StorageService.saveTasks(board.getAllTasks());
                 refreshTaskDisplay();
             },
-            (taskId) => setDraggedTaskId(taskId),
+            (taskId) => DragAndDrop.setDraggedTaskId(taskId),
             (taskId, $col) => {
                 selectedTaskId = taskId;
                 selectedColumn = $col;
@@ -227,13 +233,13 @@ function refreshTaskDisplay() {
         );
     };
 
-    displayTasks($columns, board.getAllTasks(), createTaskElementFn);
+    TaskDOM.displayTasks($columns, board.getAllTasks(), createTaskElementFn);
 }
 
 // Expose a global function for move buttons
 window.moveTaskButton = function(taskId, newColumn) {
     board.moveTask(taskId, newColumn);
-    saveTasks(board.getAllTasks());
+    StorageService.saveTasks(board.getAllTasks());
     refreshTaskDisplay();
 };
 
@@ -241,7 +247,6 @@ window.moveTaskButton = function(taskId, newColumn) {
 document.addEventListener("DOMContentLoaded", initializeApp);
 
 window.addEventListener('resize', () => {
-    console.log("resizing");
     addMobileMoveButtonsToAllTasks();
     refreshTaskDisplay();
   });
