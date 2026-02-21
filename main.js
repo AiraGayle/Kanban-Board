@@ -2,27 +2,56 @@
 import Board from "./Board.js";
 import Column from "./Column.js";
 
-// State
+const COLUMN_CONFIG = [
+    { column: "to-do", title: "To do", headerModifier: "todo" },
+    { column: "doing", title: "Doing", headerModifier: "doing" },
+    { column: "done", title: "Done", headerModifier: "done" },
+];
+
 const board = new Board(["to-do", "doing", "done"]);
+window.board = board;
 let selectedColumn = null;
 let selectedTaskId = null;
+let $columns;
 
-const $columns = getColumns();
-const $addTaskFormTemplate = document.querySelector("#ADD_TASK_FORM_TEMPLATE");
-const $editTaskFormTemplate = document.querySelector("#EDIT_TASK_FORM_TEMPLATE");
-
-// Initialize the application
 function initializeApp() {
+    renderColumns();
+    $columns = getColumns();
+
     const savedTasks = loadTasks();
     if (savedTasks.length > 0) {
         board.setTasks(savedTasks);
     }
     setupAddTaskForms();
-    setupEditTaskForms();
     setupColumnListeners();
     setupDragAndDrop();
     setupKeyboardShortcuts();
     refreshTaskDisplay();
+}
+
+function renderColumns() {
+    const $container = document.getElementById("COLUMNS_CONTAINER");
+    const $template = document.getElementById("COLUMN_TEMPLATE");
+    if (!$container || !$template) return;
+
+    COLUMN_CONFIG.forEach((config) => {
+        const $column = $template.content.cloneNode(true);
+        const $columnRoot = $column.querySelector(".column");
+        const $header = $column.querySelector(".column__header");
+        const $title = $column.querySelector(".column__title");
+        const $prioritySelect = $column.querySelector(".task-priority-input");
+        const $editPrioritySelect = $column.querySelector(".edit-task-priority-input");
+
+        $columnRoot.dataset.column = config.column;
+        $header.className = `column__header column__header--${config.headerModifier}`;
+        $title.textContent = config.title;
+        $prioritySelect.id = `priority-${config.column}`;
+        $prioritySelect.closest(".priority-row").querySelector("label").htmlFor = `priority-${config.column}`;
+        $editPrioritySelect.id = `edit-priority-${config.column}`;
+        $editPrioritySelect.closest(".priority-row").querySelector("label").htmlFor = `edit-priority-${config.column}`;
+
+        $container.appendChild($column);
+    });
 }
 
 function setupColumnListeners() {
@@ -36,12 +65,7 @@ function setupColumnListeners() {
 function setupAddTaskForms() {
     $columns.forEach($column => {
         const $addButton = $column.querySelector(".column__add-button");
-        const $template = document.querySelector("#ADD_TASK_FORM_TEMPLATE");
-        const $clone = $template.content.cloneNode(true);
-        const $form = $clone.querySelector(".add-task-section");
-        const $tasksContainer = $column.querySelector(".tasks");
-        $column.insertBefore($form, $tasksContainer);
-
+        const $form = $column.querySelector(".add-task-section");
         const $titleInput = $form.querySelector(".task-name-form");
         const $noteInput = $form.querySelector(".task-note-form");
         const $cancelButton = $form.querySelector(".cancel-btn");
@@ -51,7 +75,6 @@ function setupAddTaskForms() {
         $addButton.addEventListener("click", () => {
             $form.hidden = false;
             $titleInput.focus();
-            console.log("click")
         });
 
         $cancelButton.addEventListener("click", () => {
@@ -60,14 +83,12 @@ function setupAddTaskForms() {
 
         $confirmButton.addEventListener("click", () => {
             if ($titleInput.value.trim() === "") return;
-
             board.addTask(
                 $titleInput.value,
                 $noteInput.value,
                 $column.dataset.column,
                 $priorityInput.value
             );
-
             saveTasks(board.getAllTasks());
             resetAddForm($form, $titleInput, $noteInput, $priorityInput);
             refreshTaskDisplay();
@@ -80,16 +101,6 @@ function resetAddForm($form, $titleInput, $noteInput, $priorityInput) {
     $titleInput.value = "";
     $noteInput.value = "";
     $priorityInput.value = "Low";
-}
-
-function setupEditTaskForms() {
-    $columns.forEach($column => {
-        const $editTemplate = document.querySelector("#EDIT_TASK_FORM_TEMPLATE");
-        const $editClone = $editTemplate.content.cloneNode(true);
-        const $editForm = $editClone.querySelector(".edit-task-section");
-        const $tasksContainer = $column.querySelector(".tasks");
-        $column.insertBefore($editForm, $tasksContainer);
-    });
 }
 
 function showEditForm(taskId, $column) {
@@ -142,15 +153,16 @@ function showEditForm(taskId, $column) {
 
 function setupDragAndDrop() {
     initializeDragAndDrop($columns, (taskId, columnName, insertIndex) => {
-        board.moveTask(taskId, columnName, insertIndex)
+        board.moveTask(taskId, columnName, insertIndex);
         saveTasks(board.getAllTasks());
         refreshTaskDisplay();
     });
     
     document.addEventListener("taskDrop", (e) => {
         const { taskId, columnName, insertIndex } = e.detail;
-        tasks = moveTaskToPosition(tasks, taskId, columnName, insertIndex);
-        saveTasks(tasks);
+
+        board.moveTask(taskId, columnName, insertIndex);
+        saveTasks(board.getAllTasks());
         refreshTaskDisplay();
     });
 }
@@ -227,3 +239,9 @@ window.moveTaskButton = function(taskId, newColumn) {
 
 // Start the app when DOM is ready
 document.addEventListener("DOMContentLoaded", initializeApp);
+
+window.addEventListener('resize', () => {
+    console.log("resizing");
+    addMobileMoveButtonsToAllTasks();
+    refreshTaskDisplay();
+  });

@@ -149,52 +149,11 @@ class MobileKanban {
         card.parentNode.prepend(card);
     }
 
-    //   Mobile Menu  
-    setupMobileMenu() {
-        const menu = createElement(
-            'div',
-            'mobile-menu',
-            `
-            <button class="menu-button" id="mobileMenuBtn">+</button>
-            <div class="menu-options" id="menuOptions" style="display:none;">
-                <button onclick="showAddTask()">Add Task</button>
-                <button onclick="showSettings()">Settings</button>
-                <button onclick="toggleTheme()">Toggle Theme</button>
-            </div>
-        `
-        );
-        document.body.appendChild(menu);
-
-        const menuBtn = menu.querySelector('#mobileMenuBtn');
-        const options = menu.querySelector('#menuOptions');
-
-        menuBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            options.style.display = options.style.display === 'none' ? 'block' : 'none';
-        });
-
-        document.addEventListener('click', () => (options.style.display = 'none'));
-        options.addEventListener('click', (e) => e.stopPropagation());
-    }
-
     //Optimize Mobile Experience  
     optimizeForMobile() {
         preventDoubleTapZoom();
         addMetaViewport();
     }
-}
-
-//Global Utilities for Menu  
-function showAddTask() {
-    document.querySelector('.add-task-form')?.scrollIntoView({ behavior: 'smooth' });
-}
-
-function showSettings() {
-    alert('Settings panel (demo)');
-}
-
-function toggleTheme() {
-    document.body.classList.toggle('dark-theme');
 }
 
 //   Initialize  

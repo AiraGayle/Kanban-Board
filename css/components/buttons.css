@@ -1,0 +1,84 @@
+
+button {
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s ease;
+    opacity: 0.7;
+}
+
+button:hover {
+    opacity: 1;
+}
+
+.cancel-btn { 
+    background: var(--cancel-btn);
+    border: 1px solid var(--border-color);
+    color: var(--btn-text);
+}
+
+.cancel-btn:hover, 
+.cancel-btn:focus {
+    background: var(--cancel-btn-hover);   
+}
+
+.confirm-btn {
+    background-color: var(--confirm-btn); 
+    border: 1px solid #3a3d63;
+    color: var(--btn-text);;
+}
+
+.confirm-btn:hover, 
+.confirm-btn:focus {
+    background: var(--confirm-btn-hover);
+}
+
+.edit-cancel-btn { 
+    background: var(--cancel-btn);
+    border: 1px solid var(--border-color);
+    color: var(--btn-text);
+}
+
+.edit-cancel-btn:hover, 
+.edit-cancel-btn:focus {
+    background: var(--cancel-btn-hover);        
+}
+
+.edit-confirm-btn {
+    background-color: var(--confirm-btn);
+    border: 1px solid var(--border-color);
+    color: var(--btn-text);
+}
+
+.edit-confirm-btn:hover, 
+.edit-confirm-btn:focus {
+    background: var(--confirm-btn-hover);
+}
+
+.task__edit-button,
+.task__delete-button {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.75rem;
+    border-radius: 3px;
+    border: 1px solid var(--border-color);
+    color: var(--btn-text);
+    background: var(--edit-btn)
+}
+
+.task__edit-button:hover,
+.task__delete-button:hover {
+    background: var(--edit-btn-hover);
+}
+
+.task__delete-button {
+    background: var(--delete-btn);
+}
+
+.task__delete-button:hover {
+    background: var(--delete-btn-hover);
+}
+
+.form-actions button {
+    padding: 0.4rem 0.8rem;     
+    font-size: 0.85rem;         
+    border-radius: 4px;
+}

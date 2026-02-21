@@ -46,6 +46,8 @@ export default class Board {
 
         oldColumn.removeTask(taskId);
 
+        task.column = newColumnName;   // ⭐ THIS FIXES EVERYTHING
+
         if (insertIndex === null) {
             newColumn.addTask(task);
         } else {
