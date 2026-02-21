@@ -87,6 +87,10 @@ function createTaskElement(task, handleEdit, handleDelete, handleDragStart, hand
         handleDragStart(task.id);
     });
 
+    if (typeof attachTouchDragHandler === 'function') {
+        attachTouchDragHandler($taskDiv);
+    }
+
     $taskDiv.addEventListener("focus", () => {
         handleFocus(task.id, $taskDiv.closest(COLUMN_SELECTOR));
     });
