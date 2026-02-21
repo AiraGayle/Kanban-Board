@@ -133,18 +133,13 @@ export function createTaskElement(task, handleEdit, handleDelete, handleDragStar
 
 const EMPTY_STATE_SELECTOR = ".tasks__empty-state";
 
-/**
- * Show or hide the column empty state depending on task count
- */
 function updateColumnEmptyState($taskContainer, hasTasks) {
     const $emptyState = $taskContainer.querySelector(EMPTY_STATE_SELECTOR);
     if (!$emptyState) return;
     $emptyState.hidden = hasTasks;
 }
 
-/**
- * Display tasks in columns
- */
+
 export function displayTasks($columns, tasks, createTaskElementFn) {
     $columns.forEach($column => {
         const $taskContainer = $column.querySelector(".tasks");
