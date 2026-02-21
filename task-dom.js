@@ -131,22 +131,35 @@ function createTaskElement(task, handleEdit, handleDelete, handleDragStart, hand
     return $taskDiv;
 }
 
+const EMPTY_STATE_SELECTOR = ".tasks__empty-state";
+
+/**
+ * Show or hide the column empty state depending on task count
+ */
+function updateColumnEmptyState($taskContainer, hasTasks) {
+    const $emptyState = $taskContainer.querySelector(EMPTY_STATE_SELECTOR);
+    if (!$emptyState) return;
+    $emptyState.hidden = hasTasks;
+}
+
 /**
  * Display tasks in columns
  */
 function displayTasks($columns, tasks, createTaskElementFn) {
     $columns.forEach($column => {
         const $taskContainer = $column.querySelector(".tasks");
-        $taskContainer.innerHTML = "";
         const columnName = $column.dataset.column;
-
-        tasks
+        const columnTasks = tasks
             .filter(task => task.column === columnName)
-            .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-            .forEach(task => $taskContainer.appendChild(createTaskElementFn(task)));
+            .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+
+        const $emptyState = $taskContainer.querySelector(EMPTY_STATE_SELECTOR);
+        $taskContainer.querySelectorAll(TASK_SELECTOR).forEach((el) => el.remove());
+        updateColumnEmptyState($taskContainer, columnTasks.length > 0);
+
+        columnTasks.forEach((task) => $taskContainer.appendChild(createTaskElementFn(task)));
     });
 
-    // Update mobile move buttons after render
     addMobileMoveButtonsToAllTasks();
 }
 
