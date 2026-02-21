@@ -23,7 +23,6 @@ function initializeApp() {
         board.setTasks(savedTasks);
     }
     setupAddTaskForms();
-    setupEditTaskForms();
     setupColumnListeners();
     setupDragAndDrop();
     setupKeyboardShortcuts();
@@ -102,10 +101,6 @@ function resetAddForm($form, $titleInput, $noteInput, $priorityInput) {
     $titleInput.value = "";
     $noteInput.value = "";
     $priorityInput.value = "Low";
-}
-
-function setupEditTaskForms() {
-    // Edit forms are rendered per column from COLUMN_TEMPLATE; showEditForm binds per use.
 }
 
 function showEditForm(taskId, $column) {

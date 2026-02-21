@@ -1,0 +1,101 @@
+.add-task-section[hidden] {
+    display: none;
+}
+
+.add-task-section:not([hidden]) {
+    background: var(--add-section-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 1rem;
+    margin: 0.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.edit-task-section[hidden] {
+    display: none;
+}
+
+.edit-task-section:not([hidden]) {
+    background:var(--add-section-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 1rem;
+    margin: 0.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.add-task-section input,
+.add-task-section textarea,
+.add-task-section select {
+    width: 100%;
+    background: var(--text-area);
+    color: var(--edit-text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 0.45rem 0.6rem;
+    font-size: 0.85rem;
+}
+
+.edit-task-section input,
+.edit-task-section textarea,
+.edit-task-section select {
+    width: 100%;
+    background: var(--text-area);
+    color: var(--edit-text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 0.45rem 0.6rem;
+    font-size: 0.85rem;
+}
+
+.add-task-section textarea {
+    min-height: 60px;
+}
+
+.task-name-form:focus,
+.task-note-form:focus,
+.task-priority-input:focus {
+    outline: 2px solid var(--focus-color);
+}
+
+.edit-task-name-form:focus,
+.edit-task-note-form:focus,
+.edit-task-priority-input:focus,
+.edit-task-column-input:focus {
+    outline: 2px solid var(--focus-color);
+}
+
+.add-task-section input::placeholder,
+.add-task-section textarea::placeholder,
+.add-task-section select::placeholder {
+    color: var(--form-text)      
+}
+
+.add-task-section input:focus::placeholder,
+.add-task-section textarea:focus::placeholder,
+.add-task-section select:focus::placeholder {
+    color: var(--form-text-focus)    
+}
+
+.edit-task-section input::placeholder,
+.edit-task-section textarea::placeholder,
+.edit-task-section select::placeholder {
+    color: var(--form-text)         
+}
+
+.edit-task-section input:focus::placeholder,
+.edit-task-section textarea:focus::placeholder,
+.edit-task-section select:focus::placeholder {
+    color: var(--form-text-focus)     
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}

@@ -1,0 +1,35 @@
+.container {
+    width: 90%;
+    margin: 0 auto;
+}
+
+.container__title {
+    margin: 2rem 0;
+    text-align: center;
+}
+
+.container__columns {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    align-items: flex-start;
+}
+
+@media (max-width: 700px) {
+    .container__columns {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: center;
+    }
+    .column {
+        min-width: 80vw;
+        max-width: 90vw;
+        flex: 0 0 auto;
+        margin-right: 0.5rem;
+    }
+}

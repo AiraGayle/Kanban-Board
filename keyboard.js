@@ -1,5 +1,4 @@
 // keyboard.js
-
 class KeyboardManager {
     constructor($columns, getSelectedTaskId, getSelectedColumn, callbacks) {
         this.$columns = $columns;
