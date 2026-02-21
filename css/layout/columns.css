@@ -51,6 +51,15 @@
     align-items: center;
 }
 
+.tasks__empty-state {
+    margin-top: auto;
+    margin-bottom: auto;
+    padding: 0.75rem 1rem;
+    color: var(--note-color);
+    font-size: 1rem;
+    text-align: center;
+}
+
 .tasks::-webkit-scrollbar {
     width: 6px;
     background: rgba(255, 255, 255, 0.05);
