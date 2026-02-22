@@ -13,7 +13,7 @@ export class Task {
     }
 
     render() {
-        const { id, title, note, priority } = this.data;
+        const id = this.data;
         const $card = DomUtils.createElement('div', 'task', { 
             'draggable': 'true', 
             'tabindex': '0',
