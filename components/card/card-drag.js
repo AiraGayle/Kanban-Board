@@ -123,8 +123,6 @@
                 }
             }
         }
-
-        this.callbacks.clearDraggedTaskId();
     };
 
 })();

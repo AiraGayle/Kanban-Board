@@ -1,5 +1,4 @@
 // Main — initializes the Kanban app
-
 document.addEventListener('DOMContentLoaded', () => {
     try {
         if (window.matchMedia('(prefers-color-scheme: dark)').matches)
