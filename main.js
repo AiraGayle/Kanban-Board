@@ -2,7 +2,9 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     try {
-        document.body.classList.add('dark-mode');
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches)
+            document.body.classList.add('dark-mode');
+        else document.body.classList.add('light-mode');
 
         const $boardColumns = document.getElementById('BOARD_COLUMNS');
         if (!$boardColumns) {

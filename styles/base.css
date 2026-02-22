@@ -1,3 +1,9 @@
+@import url(../components/board/board.css);
+@import url(../components/card/card.css);
+@import url(../components/column/column.css);
+@import url(../components/task-form/task-form.css);
+@import url(../components/task/task.css);
+
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
 :root {
