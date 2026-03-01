@@ -1,6 +1,8 @@
-// Card — encapsulates a single task card's DOM, view/edit toggle, and events
+import { makeElement } from '../../utils/dom-utils.js';
+import { buildViewSection, buildEditSection } from './card-dom.js';
+import { attachDragListeners } from './card-drag.js';
 
-class Card {
+export class Card {
     static currentEditing = null;
     constructor({ id, title, note, column, priority, order }, callbacks) {
         this.id = id;
@@ -31,17 +33,16 @@ class Card {
     createElement() {
         const $card = makeElement('div', 'card');
         $card.dataset.taskId = this.id;
-        
-        // Only enable HTML5 drag and drop on desktop
-        const isMobile = 'ontouchstart' in window;
-        if (!isMobile) {
-            $card.draggable = true;
-        }
-        
         $card.tabIndex = 0;
+        if (!('ontouchstart' in window)) $card.draggable = true;
 
-        this.$viewSection = this.createViewSection();
-        this.$editSection = this.createEditSection();
+        this.$viewSection = buildViewSection(this);
+
+        const editRefs = buildEditSection(this);
+        this.$editSection = editRefs.$section;
+        this.$editTitleInput = editRefs.$titleInput;
+        this.$editNoteInput = editRefs.$noteInput;
+        this.$editPrioritySelect = editRefs.$prioritySelect;
         this.$editSection.hidden = true;
 
         $card.appendChild(this.$viewSection);
@@ -51,25 +52,63 @@ class Card {
     }
 
     attachEventListeners() {
-        const isMobile = 'ontouchstart' in window;
-        
-        if (isMobile) {
-            // Mobile touch drag and drop
-            this.$element.addEventListener('touchstart', (e) => this.handleTouchStart(e), { passive: false });
-            this.$element.addEventListener('touchmove', (e) => this.handleTouchMove(e), { passive: false });
-            this.$element.addEventListener('touchend', (e) => this.handleTouchEnd(e), { passive: false });
-            this.$element.addEventListener('touchcancel', (e) => this.handleTouchCancel(e), { passive: false });
-        } else {
-            // Desktop HTML5 drag and drop
-            this.$element.addEventListener('dragstart', () => this.callbacks.onDragStart(this.id));
-        }
-        
+        this.$viewSection.querySelector('.card__edit-button')
+            .addEventListener('click', (e) => this.handleEditClick(e));
+        this.$viewSection.querySelector('.card__delete-button')
+            .addEventListener('click', (e) => this.handleDeleteClick(e));
+        this.$editSection.querySelector('.card__save-button')
+            .addEventListener('click', () => this.handleSaveEdit());
+        this.$editSection.querySelector('.card__cancel-button')
+            .addEventListener('click', () => this.hideEditForm());
+        this.$editSection.addEventListener('keydown', (e) => this.handleEditKeyDown(e));
         this.$element.addEventListener('focus', () => this.handleFocus());
+        attachDragListeners(this);
+    }
+
+    handleEditClick(e) {
+        e.stopPropagation();
+        this.showEditForm();
+    }
+
+    handleDeleteClick(e) {
+        e.stopPropagation();
+        this.callbacks.onDelete(this.id);
+    }
+
+    handleEditKeyDown(e) {
+        if (e.key === 'Escape') this.hideEditForm();
     }
 
     handleFocus() {
         const $column = this.$element.closest('.column');
         this.callbacks.onFocus(this.id, $column);
+    }
+
+    handleSaveEdit() {
+        const title = this.$editTitleInput.value.trim();
+        if (!title) return;
+        this.callbacks.onEdit(this.id, {
+            title,
+            note: this.$editNoteInput.value,
+            priority: this.$editPrioritySelect.value,
+        });
+        this.hideEditForm();
+    }
+
+    showEditForm() {
+        if (Card.currentEditing && Card.currentEditing !== this)
+            Card.currentEditing.hideEditForm();
+        Card.currentEditing = this;
+        this.$viewSection.hidden = true;
+        this.$editSection.hidden = false;
+        this.$editTitleInput.focus();
+    }
+
+    hideEditForm() {
+        this.$viewSection.hidden = false;
+        this.$editSection.hidden = true;
+        this.$element?.focus();
+        if (Card.currentEditing === this) Card.currentEditing = null;
     }
 
     static fromJSON(data, callbacks) {

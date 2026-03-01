@@ -2,8 +2,6 @@
     background: var(--column-color);
     flex: 1;
     min-width: 260px;
-    min-height: 25vh;
-    max-height: 80vh;
     border-radius: 10px;
     display: flex;
     flex-direction: column;

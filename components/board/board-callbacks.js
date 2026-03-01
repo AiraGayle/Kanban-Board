@@ -1,20 +1,18 @@
-(function() {
-    Board.prototype.buildColumnCallbacks = function() {
-        return {
-            onAdd:             (data)              => this.handleAddTask(data),
-            onColumnClick:     (name)              => { this.selectedColumnName = name; },
-            onDrop:            (id, col, idx)      => this.handleDrop(id, col, idx),
-            getDraggedTaskId:  ()                  => this.draggedTaskId,
-            clearDraggedTaskId: ()                 => { this.draggedTaskId = null; },
-        };
+export function buildColumnCallbacks(board) {
+    return {
+        onAdd: (data) => board.handleAddTask(data),
+        onColumnClick: (name) => { board.selectedColumnName = name; },
+        onDrop: (id, col, idx) => board.handleDrop(id, col, idx),
+        getDraggedTaskId: () => board.draggedTaskId,
+        clearDraggedTaskId: () => { board.draggedTaskId = null; },
     };
+}
 
-    Board.prototype.buildCardCallbacks = function() {
-        return {
-            onEdit:       (taskId, data)   => this.handleEditTask(taskId, data),
-            onDelete:     (taskId)         => this.handleDeleteTask(taskId),
-            onDragStart:  (taskId)         => { this.draggedTaskId = taskId; },
-            onFocus:      (taskId, $col)   => this.handleCardFocus(taskId, $col),
-        };
+export function buildCardCallbacks(board) {
+    return {
+        onEdit: (taskId, data) => board.handleEditTask(taskId, data),
+        onDelete: (taskId) => board.handleDeleteTask(taskId),
+        onDragStart: (taskId) => { board.draggedTaskId = taskId; },
+        onFocus: (taskId, $col) => board.handleCardFocus(taskId, $col),
     };
-})();
+}

@@ -1,44 +1,12 @@
 @import url(../components/board/board.css);
 @import url(../components/card/card.css);
 @import url(../components/column/column.css);
-@import url(../components/task-form/task-form.css);
-@import url(../components/task/task.css);
 
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
+/* ── Light mode (default) ──────────────────────────────── */
 :root {
     --note-color: #b0b0b0;
-}
-
-body.dark-mode {
-    --low-color: #4274c5;
-    --medium-color: #ffcc00;
-    --high-color: #c72f2f;
-    --todo-color: #e2435a;
-    --doing-color: #fdac41;
-    --done-color: #02c777;
-    --bg-color: #171b36;
-    --column-color: #40445f;
-    --text-color: #fcffff;
-    --edit-btn: #3f425f;
-    --edit-btn-hover: #4b4d6e;
-    --btn-text: #fcffff;
-    --delete-btn: #5f3f3f;
-    --delete-btn-hover: #6e4b4b;
-    --add-section-bg: #ffffff08;
-    --text-area: #fcffff;
-    --edit-text-color: #171b36;
-    --focus-color: #171b36;
-    --cancel-btn: #3a3d63;
-    --cancel-btn-hover: #4b4d6e;
-    --confirm-btn: #2c2f4a;
-    --confirm-btn-hover: #383b5c;
-    --border-color: #ffffff1f;
-    --add-btn-bg: #fcffff;
-    --add-btn-text: #171b36;
-}
-
-body.light-mode {
     --low-color: #4a90e2;
     --medium-color: #f5a623;
     --high-color: #e94e4e;
@@ -66,6 +34,38 @@ body.light-mode {
     --add-btn-text: #171b36;
 }
 
+/* ── Dark mode ─────────────────────────────────────────── */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --low-color: #4274c5;
+        --medium-color: #ffcc00;
+        --high-color: #c72f2f;
+        --todo-color: #e2435a;
+        --doing-color: #fdac41;
+        --done-color: #02c777;
+        --bg-color: #171b36;
+        --column-color: #40445f;
+        --text-color: #fcffff;
+        --edit-btn: #3f425f;
+        --edit-btn-hover: #4b4d6e;
+        --btn-text: #fcffff;
+        --delete-btn: #5f3f3f;
+        --delete-btn-hover: #6e4b4b;
+        --add-section-bg: #ffffff08;
+        --text-area: #fcffff;
+        --edit-text-color: #171b36;
+        --focus-color: #171b36;
+        --cancel-btn: #3a3d63;
+        --cancel-btn-hover: #4b4d6e;
+        --confirm-btn: #2c2f4a;
+        --confirm-btn-hover: #383b5c;
+        --border-color: #ffffff1f;
+        --add-btn-bg: #fcffff;
+        --add-btn-text: #171b36;
+    }
+}
+
+/* ── Reset ─────────────────────────────────────────────── */
 * {
     font-family: 'Montserrat', sans-serif;
     font-weight: 400;
@@ -77,8 +77,6 @@ body.light-mode {
 body {
     background: var(--bg-color);
     color: var(--text-color);
-    min-height: 100vh;
-    overflow: auto;
 }
 
 .btn {
@@ -90,11 +88,4 @@ body {
 
 .btn:hover {
     opacity: 1;
-}
-
-@media (max-width: 768px) {
-    body {
-        padding-bottom: 2rem;
-        overflow: auto;
-    }
 }

@@ -1,4 +1,10 @@
 // Board — coordinates columns, tasks state, keyboard shortcuts
+import { Column } from '../column/column.js';
+import { TaskService } from '../../services/task-service.js';
+import { StorageService } from '../../services/storage-service.js';
+import { buildColumnCallbacks, buildCardCallbacks } from './board-callbacks.js';
+import { setupKeyboard } from './board-keyboard.js';
+import * as TaskHandlers from './board-tasks.js';
 
 const COLUMN_CONFIGS = [
     { name: 'to-do',  label: 'To do', colorModifier: 'todo'  },
@@ -6,16 +12,11 @@ const COLUMN_CONFIGS = [
     { name: 'done',   label: 'Done',  colorModifier: 'done'  },
 ];
 
-class Board {
+export default class Board {
     constructor() {
         this.taskService = new TaskService();
         this.storageService = new StorageService();
-        try {
-            this.tasks = this.storageService.load();
-        } catch (error) {
-            console.error('Error loading tasks:', error.message);
-            this.tasks = [];
-        }
+        this.tasks = this.storageService.load();
         this.columns = [];
         this.selectedColumnName = COLUMN_CONFIGS[0].name;
         this.selectedCardId = null;
@@ -23,31 +24,26 @@ class Board {
     }
 
     init($container) {
+        setupKeyboard(this);
         this.setupColumns($container);
-        this.setupKeyboard();
         this.refresh();
     }
 
     setupColumns($container) {
         COLUMN_CONFIGS.forEach(config => {
-            const col = new Column(config, this.buildColumnCallbacks());
+            const col = new Column(config, buildColumnCallbacks(this));
             col.render($container);
             this.columns.push(col);
         });
     }
 
     saveAndRefresh() {
-        try {
-            this.storageService.save(this.tasks);
-        } catch (error) {
-            console.error('Error saving tasks:', error.message);
-            alert('Failed to save tasks. Please check your browser storage settings.');
-        }
+        this.storageService.save(this.tasks);
         this.refresh();
     }
 
     refresh() {
-        const cardCallbacks = this.buildCardCallbacks();
+        const cardCallbacks = buildCardCallbacks(this);
         this.columns.forEach(col => {
             const cards = this.taskService.getByColumn(this.tasks, col.name);
             col.displayCards(cards, cardCallbacks);
@@ -60,5 +56,25 @@ class Board {
 
     getSelectedColumnIndex() {
         return this.columns.findIndex(c => c.name === this.selectedColumnName);
+    }
+
+    handleAddTask(data) { 
+        TaskHandlers.handleAddTask(this, data); 
+    }
+
+    handleEditTask(id, data) { 
+        TaskHandlers.handleEditTask(this, id, data); 
+    }
+
+    handleDeleteTask(id) { 
+        TaskHandlers.handleDeleteTask(this, id); 
+    }
+
+    handleDrop(id, col, idx) { 
+        TaskHandlers.handleDrop(this, id, col, idx); 
+    }
+
+    handleCardFocus(id, $col) { 
+        TaskHandlers.handleCardFocus(this, id, $col); 
     }
 }

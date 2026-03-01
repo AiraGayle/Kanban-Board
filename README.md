@@ -31,44 +31,50 @@ A simple, offline Kanban board built using DOM APIs and LocalStorage.
    ```
 
 2. **Open the application**
-   Open `index.html` in your web browser
+   Open `index.html` directly in your browser.
+   > Note: because ES modules are used, open via a local server (e.g. VS Code Live Server) rather than `file://`.
+
+## Keyboard Shortcuts
+
+| Shortcut       | Action                  |
+|----------------|-------------------------|
+| Alt + A        | Add task to focused col |
+| Alt + E        | Edit selected card      |
+| Alt + D        | Delete selected card    |
+| Alt + ← / →    | Move card left / right  |
+| ← / →          | Switch focused column   |
+| ↑ / ↓          | Navigate cards          |
 
 ## Project Structure
 
 ```
 .
-├── index.html                        # Main HTML file
-├── main.js                           # Application initialization
+├── index.html                          # App shell — structure only
+├── main.js                             # Entry point — initializes Board
 ├── components/
 │   ├── board/
-│   │   ├── board-callbacks.js        # Board-level event callbacks
-│   │   ├── board-keyboard.js         # Keyboard navigation and shortcuts
-│   │   ├── board-tasks.js            # Task state coordination across columns
-│   │   ├── board.css                 # Board layout styles
-│   │   └── board.js                  # Board — coordinates columns, tasks state, keyboard shortcuts
+│   │   ├── board.js                    # Board class — orchestrates columns & state
+│   │   ├── board-callbacks.js          # Builds callback objects for columns & cards
+│   │   ├── board-keyboard.js           # Keyboard shortcuts and navigation
+│   │   ├── board-tasks.js              # Task CRUD handlers (called by board)
+│   │   └── board.css                   # Board layout styles
 │   ├── card/
-│   │   ├── card-drag.js              # Drag & touch handling, edge-scroll logic
-│   │   ├── card-edit.js              # Edit mode toggle and form interactions
-│   │   ├── card-view.js              # View mode rendering
-│   │   ├── card.css                  # Card styles
-│   │   └── card.js                   # Card — DOM, view/edit toggle, and events
-│   ├── column/
-│   │   ├── column.css                # Column styles
-│   │   └── column.js                 # Column — task list rendering and drop targets
-│   ├── task/
-│   │   ├── task.css                  # Task styles
-│   │   └── task.js                   # Task — data model and DOM creation
-│   └── task-form/
-│       ├── task-form.css             # Task form styles
-│       └── task-form.js              # Task form — create and edit task inputs
+│   │   ├── card.js                     # Card class — lifecycle, events, edit toggle
+│   │   ├── card-dom.js                 # Builds card view and edit DOM sections
+│   │   ├── card-drag.js                # Drag & touch handling, auto-scroll
+│   │   └── card.css                    # Card styles
+│   └── column/
+│       ├── column.js                   # Column class — rendering, drop handling
+│       ├── column-dom.js               # Builds column DOM structure
+│       └── column.css                  # Column styles
 ├── services/
-│   ├── storage-service.js            # Handles localStorage operations
-│   └── task-service.js               # Task business logic
+│   ├── storage-service.js              # localStorage read/write
+│   └── task-service.js                 # Task business logic (CRUD, ordering)
 ├── styles/
-│   └── base.css                      # Global base styles and CSS variables
+│   └── base.css                        # CSS variables, reset, dark/light theme
 ├── utils/
-│   └── dom-utils.js                  # Shared DOM helper utilities
-└── README.md                         # This file
+│   └── dom-utils.js                    # Shared makeElement helper
+└── README.md
 ```
 
 ## Made With

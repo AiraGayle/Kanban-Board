@@ -1,26 +1,22 @@
 // Storage Service — wraps localStorage for task persistence
 
-class StorageService {
-    constructor() {
-        this.STORAGE_KEY = 'tasks';
-    }
+export class StorageService {
+    static #STORAGE_KEY = 'tasks';
 
     save(tasks) {
         try {
-            const serializedTasks = JSON.stringify(tasks);
-            localStorage.setItem(this.STORAGE_KEY, serializedTasks);
+            localStorage.setItem(StorageService.#STORAGE_KEY, JSON.stringify(tasks));
         } catch (error) {
-            throw new Error(`Failed to save tasks to localStorage: ${error.message}`);
+            throw new Error(`Failed to save tasks: ${error.message}`);
         }
     }
 
     load() {
         try {
-            const storedData = localStorage.getItem(this.STORAGE_KEY);
-            if (!storedData) return [];
-            return JSON.parse(storedData);
+            const data = localStorage.getItem(StorageService.#STORAGE_KEY);
+            return data ? JSON.parse(data) : [];
         } catch (error) {
-            throw new Error(`Failed to load tasks from localStorage: ${error.message}`);
+            throw new Error(`Failed to load tasks: ${error.message}`);
         }
     }
 }

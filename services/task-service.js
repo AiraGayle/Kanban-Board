@@ -1,6 +1,6 @@
 // Task Service — all business logic for task CRUD and ordering
 
-class TaskService {
+export class TaskService {
     getMaxOrder(tasks, column) {
         const inColumn = tasks.filter(t => t.column === column);
         if (inColumn.length === 0) return -1;
@@ -45,18 +45,14 @@ class TaskService {
     }
 
     moveTask(tasks, taskId, newColumn) {
-        const maxOrder = this.getMaxOrder(
-            tasks.filter(t => t.id !== taskId),
-            newColumn
-        );
-
+        const maxOrder = this.getMaxOrder(tasks.filter(t => t.id !== taskId), newColumn);
         return tasks.map(t =>
             t.id === taskId ? { ...t, column: newColumn, order: maxOrder + 1 } : t
         );
     }
 
     moveTaskToPosition(tasks, taskId, newColumn, insertIndex) {
-        const task = this.findById(tasks, taskId);
+        const task = tasks.find(t => t.id === taskId);
         if (!task) return tasks;
 
         const withoutTask = tasks.filter(t => t.id !== taskId);
@@ -67,7 +63,6 @@ class TaskService {
         inColumn.splice(safeIndex, 0, updatedTask);
         inColumn.forEach((t, i) => { t.order = i; });
 
-        const otherColumns = withoutTask.filter(t => t.column !== newColumn);
-        return [...otherColumns, ...inColumn];
+        return [...withoutTask.filter(t => t.column !== newColumn), ...inColumn];
     }
 }

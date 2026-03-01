@@ -40,17 +40,9 @@
     border-left: 4px solid transparent;
 }
 
-.card__priority--high {
-    border-left-color: var(--high-color);
-}
-
-.card__priority--medium {
-    border-left-color: var(--medium-color);
-}
-
-.card__priority--low {
-    border-left-color: var(--low-color);
-}
+.card__priority--high   { border-left-color: var(--high-color);   }
+.card__priority--medium { border-left-color: var(--medium-color); }
+.card__priority--low    { border-left-color: var(--low-color);    }
 
 .card__actions {
     display: flex;
@@ -69,22 +61,11 @@
     background: var(--edit-btn);
 }
 
-.card__edit-button:hover {
-    background: var(--edit-btn-hover);
-}
+.card__edit-button:hover   { background: var(--edit-btn-hover);   }
+.card__delete-button       { background: var(--delete-btn);       }
+.card__delete-button:hover { background: var(--delete-btn-hover); }
 
-.card__delete-button {
-    background: var(--delete-btn);
-}
-
-.card__delete-button:hover {
-    background: var(--delete-btn-hover);
-}
-
-.card__view[hidden] {
-    display: none;
-}
-
+.card__view[hidden],
 .card__edit-form[hidden] {
     display: none;
 }
@@ -135,9 +116,7 @@
     gap: 0.5rem;
 }
 
-.card__priority-label {
-    font-size: 0.85rem;
-}
+.card__priority-label { font-size: 0.85rem; }
 
 .card__form-actions {
     display: flex;
@@ -155,9 +134,7 @@
     color: var(--btn-text);
 }
 
-.card__cancel-button:hover {
-    background: var(--cancel-btn-hover);
-}
+.card__cancel-button:hover { background: var(--cancel-btn-hover); }
 
 .card__save-button {
     padding: 0.4rem 0.8rem;
@@ -168,9 +145,7 @@
     color: var(--btn-text);
 }
 
-.card__save-button:hover {
-    background: var(--confirm-btn-hover);
-}
+.card__save-button:hover { background: var(--confirm-btn-hover); }
 
 .card--dragging {
     opacity: 0.8;

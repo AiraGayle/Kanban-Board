@@ -1,14 +1,13 @@
 // Main — initializes the Kanban app
+import Board from './components/board/board.js';
+
 document.addEventListener('DOMContentLoaded', () => {
     try {
-        if (window.matchMedia('(prefers-color-scheme: dark)').matches)
-            document.body.classList.add('dark-mode');
-        else document.body.classList.add('light-mode');
-
         const $boardColumns = document.getElementById('BOARD_COLUMNS');
-        if (!$boardColumns) {
+
+        if (!$boardColumns)
             throw new Error('Board columns container not found in DOM');
-        }
+
         const board = new Board();
         board.init($boardColumns);
     } catch (error) {

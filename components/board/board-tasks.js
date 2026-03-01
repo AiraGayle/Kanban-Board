@@ -1,36 +1,38 @@
-(function() {
-    Board.prototype.handleAddTask = function(taskData) {
-        this.tasks = this.taskService.createTask(this.tasks, taskData);
-        this.saveAndRefresh();
-    };
+export function handleAddTask(board, taskData) {
+    board.tasks = board.taskService.createTask(board.tasks, taskData);
+    board.saveAndRefresh();
+}
 
-    Board.prototype.handleEditTask = function(taskId, data) {
-        this.tasks = this.taskService.updateTask(this.tasks, taskId, data);
-        this.saveAndRefresh();
-    };
+export function handleEditTask(board, taskId, data) {
+    board.tasks = board.taskService.updateTask(board.tasks, taskId, data);
+    board.saveAndRefresh();
+}
 
-    Board.prototype.handleDeleteTask = function(taskId) {
-        const adjacentId = this.findAdjacentCardId(taskId);
-        this.tasks = this.taskService.deleteTask(this.tasks, taskId);
-        if (this.selectedCardId === taskId) this.selectedCardId = null;
-        this.saveAndRefresh();
-        if (adjacentId) document.querySelector(`.card[data-task-id="${adjacentId}"]`)?.focus();
-    };
+export function handleDeleteTask(board, taskId) {
+    const adjacentId = findAdjacentCardId(taskId);
+    board.tasks = board.taskService.deleteTask(board.tasks, taskId);
+    if (board.selectedCardId === taskId) board.selectedCardId = null;
+    board.saveAndRefresh();
+    if (adjacentId) focusCard(adjacentId);
+}
 
-    Board.prototype.handleDrop = function(taskId, column, index) {
-        this.tasks = this.taskService.moveTaskToPosition(this.tasks, taskId, column, index);
-        this.saveAndRefresh();
-    };
+export function handleDrop(board, taskId, column, index) {
+    board.tasks = board.taskService.moveTaskToPosition(board.tasks, taskId, column, index);
+    board.saveAndRefresh();
+}
 
-    Board.prototype.handleCardFocus = function(taskId, $colEl) {
-        this.selectedCardId = taskId;
-        const col = this.columns.find(c => c.$element === $colEl);
-        if (col) this.selectedColumnName = col.name;
-    };
+export function handleCardFocus(board, taskId, $colEl) {
+    board.selectedCardId = taskId;
+    const col = board.columns.find(c => c.$element === $colEl);
+    if (col) board.selectedColumnName = col.name;
+}
 
-    Board.prototype.findAdjacentCardId = function(taskId) {
-        const $card = document.querySelector(`.card[data-task-id="${taskId}"]`);
-        const $adj = $card?.nextElementSibling ?? $card?.previousElementSibling;
-        return $adj?.classList.contains('card') ? $adj.dataset.taskId : null;
-    };
-})();
+function findAdjacentCardId(taskId) {
+    const $card = document.querySelector(`.card[data-task-id="${taskId}"]`);
+    const $adj = $card?.nextElementSibling ?? $card?.previousElementSibling;
+    return $adj?.classList.contains('card') ? $adj.dataset.taskId : null;
+}
+
+function focusCard(taskId) {
+    document.querySelector(`.card[data-task-id="${taskId}"]`)?.focus();
+}

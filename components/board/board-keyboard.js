@@ -1,104 +1,87 @@
-(function() {
-    Board.prototype.setupKeyboard = function() {
-        document.addEventListener('keydown', (e) => this.handleKeyDown(e));
-    };
+export function setupKeyboard(board) {
+    document.addEventListener('keydown', (e) => handleKeyDown(board, e));
+}
 
-    Board.prototype.handleKeyDown = function(e) {
-        const isInFormField = ['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName);
-        if (isInFormField) return;
+function handleKeyDown(board, e) {
+    if (isInFormField()) return;
 
-        const { altKey, key } = e;
+    const { altKey, key } = e;
 
-        if (altKey && key === 'a')           return this.handleAddShortcut(e);
-        if (altKey && key === 'd')           return this.handleDeleteShortcut(e);
-        if (altKey && key === 'e')           return this.handleEditShortcut(e);
-        if (altKey && key === 'ArrowRight')  return this.handleMoveCardRight(e);
-        if (altKey && key === 'ArrowLeft')   return this.handleMoveCardLeft(e);
-        if (!altKey && key === 'ArrowDown')  return this.handleNavigateDown(e);
-        if (!altKey && key === 'ArrowUp')    return this.handleNavigateUp(e);
-        if (!altKey && key === 'ArrowRight') return this.handleNavigateColumnRight(e);
-        if (!altKey && key === 'ArrowLeft')  return this.handleNavigateColumnLeft(e);
-    };
+    if (altKey && key === 'a')           return handleAddShortcut(board, e);
+    if (altKey && key === 'd')           return handleDeleteShortcut(board, e);
+    if (altKey && key === 'e')           return handleEditShortcut(board, e);
+    if (altKey && key === 'ArrowRight')  return handleMoveCard(board, e, 1);
+    if (altKey && key === 'ArrowLeft')   return handleMoveCard(board, e, -1);
+    if (!altKey && key === 'ArrowDown')  return handleNavigateDown(e);
+    if (!altKey && key === 'ArrowUp')    return handleNavigateUp(e);
+    if (!altKey && key === 'ArrowRight') return handleNavigateColumn(board, e, 1);
+    if (!altKey && key === 'ArrowLeft')  return handleNavigateColumn(board, e, -1);
+}
 
-    Board.prototype.handleAddShortcut = function(e) {
-        e.preventDefault();
-        this.getSelectedColumn()?.showAddForm();
-    };
+function isInFormField() {
+    return ['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName);
+}
 
-    Board.prototype.handleDeleteShortcut = function(e) {
-        e.preventDefault();
-        if (this.selectedCardId) this.handleDeleteTask(this.selectedCardId);
-    };
+function handleAddShortcut(board, e) {
+    e.preventDefault();
+    board.getSelectedColumn()?.showAddForm();
+}
 
-    Board.prototype.handleEditShortcut = function(e) {
-        e.preventDefault();
-        if (!this.selectedCardId) return;
-        document.querySelector(`.card[data-task-id="${this.selectedCardId}"] .card__edit-button`)?.click();
-    };
+function handleDeleteShortcut(board, e) {
+    e.preventDefault();
+    if (board.selectedCardId) board.handleDeleteTask(board.selectedCardId);
+}
 
-    Board.prototype.handleMoveCardRight = function(e) {
-        e.preventDefault();
-        this.moveSelectedCard(1);
-    };
+function handleEditShortcut(board, e) {
+    e.preventDefault();
+    if (!board.selectedCardId) return;
+    document.querySelector(`.card[data-task-id="${board.selectedCardId}"] .card__edit-button`)?.click();
+}
 
-    Board.prototype.handleMoveCardLeft = function(e) {
-        e.preventDefault();
-        this.moveSelectedCard(-1);
-    };
+function handleMoveCard(board, e, direction) {
+    e.preventDefault();
+    if (!board.selectedCardId) return;
 
-    Board.prototype.moveSelectedCard = function(direction) {
-        if (!this.selectedCardId) return;
+    const newIndex = board.getSelectedColumnIndex() + direction;
+    if (newIndex < 0 || newIndex >= board.columns.length) return;
 
-        const currentIndex = this.getSelectedColumnIndex();
-        const newIndex = currentIndex + direction;
-        const isOutOfBounds = newIndex < 0 || newIndex >= this.columns.length;
-        if (isOutOfBounds) return;
+    const newColumnName = board.columns[newIndex].name;
+    const taskId = board.selectedCardId;
 
-        const newColumnName = this.columns[newIndex].name;
-        const taskId = this.selectedCardId;
+    board.tasks = board.taskService.moveTask(board.tasks, taskId, newColumnName);
+    board.selectedColumnName = newColumnName;
+    board.saveAndRefresh();
+    focusCard(taskId);
+}
 
-        this.tasks = this.taskService.moveTask(this.tasks, taskId, newColumnName);
-        this.selectedColumnName = newColumnName;
-        this.saveAndRefresh();
+function handleNavigateDown(e) {
+    const $active = document.activeElement;
+    if (!$active?.classList.contains('card')) return;
+    e.preventDefault();
+    if ($active.nextElementSibling?.classList.contains('card'))
+        $active.nextElementSibling.focus();
+}
 
-        document.querySelector(`.card[data-task-id="${taskId}"]`)?.focus();
-    };
+function handleNavigateUp(e) {
+    const $active = document.activeElement;
+    if (!$active?.classList.contains('card')) return;
+    e.preventDefault();
+    if ($active.previousElementSibling?.classList.contains('card'))
+        $active.previousElementSibling.focus();
+}
 
-    Board.prototype.handleNavigateDown = function(e) {
-        const $active = document.activeElement;
-        if (!$active?.classList.contains('card')) return;
-        e.preventDefault();
-        $active.nextElementSibling?.classList.contains('card')
-            && $active.nextElementSibling.focus();
-    };
+function handleNavigateColumn(board, e, direction) {
+    if (!document.activeElement?.classList.contains('card')) return;
+    e.preventDefault();
 
-    Board.prototype.handleNavigateUp = function(e) {
-        const $active = document.activeElement;
-        if (!$active?.classList.contains('card')) return;
-        e.preventDefault();
-        $active.previousElementSibling?.classList.contains('card')
-            && $active.previousElementSibling.focus();
-    };
+    const newIndex = board.getSelectedColumnIndex() + direction;
+    if (newIndex < 0 || newIndex >= board.columns.length) return;
 
-    Board.prototype.handleNavigateColumnRight = function(e) {
-        if (!document.activeElement?.classList.contains('card')) return;
-        e.preventDefault();
-        this.navigateToAdjacentColumn(1);
-    };
+    const $firstCard = board.columns[newIndex].$element.querySelector('.card');
+    if ($firstCard) $firstCard.focus();
+    board.selectedColumnName = board.columns[newIndex].name;
+}
 
-    Board.prototype.handleNavigateColumnLeft = function(e) {
-        if (!document.activeElement?.classList.contains('card')) return;
-        e.preventDefault();
-        this.navigateToAdjacentColumn(-1);
-    };
-
-    Board.prototype.navigateToAdjacentColumn = function(direction) {
-        const newIndex = this.getSelectedColumnIndex() + direction;
-        const isOutOfBounds = newIndex < 0 || newIndex >= this.columns.length;
-        if (isOutOfBounds) return;
-
-        const $firstCard = this.columns[newIndex].$element.querySelector('.card');
-        if ($firstCard) $firstCard.focus();
-        this.selectedColumnName = this.columns[newIndex].name;
-    };
-})();
+function focusCard(taskId) {
+    document.querySelector(`.card[data-task-id="${taskId}"]`)?.focus();
+}
