@@ -68,7 +68,12 @@ function handleTouchCancel(card) {
 }
 
 function moveCardVisually(card, deltaX, deltaY) {
-    card.$element.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+    if (card.isDragging) {
+        card.$element.style.left = `${card._dragOffsetX + deltaX}px`;
+        card.$element.style.top  = `${card._dragOffsetY + deltaY}px`;
+    } else {
+        card.$element.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+    }
 }
 
 function isDragThresholdMet(absDeltaX, absDeltaY, threshold) {
@@ -79,12 +84,45 @@ function startCardDrag(card) {
     card.isDragging = true;
     card.callbacks.onDragStart(card.id);
     card.$element.classList.add('card--dragging');
+
+    // Save original position info before reparenting
+    const rect = card.$element.getBoundingClientRect();
+    card._originalParent      = card.$element.parentNode;
+    card._originalNextSibling = card.$element.nextSibling;
+    card._dragOffsetX         = rect.left;
+    card._dragOffsetY         = rect.top;
+    card._originalWidth       = rect.width;
+
+    // Pin it to exact screen position, then move to body
+    card.$element.style.position = 'fixed';
+    card.$element.style.left     = `${rect.left}px`;
+    card.$element.style.top      = `${rect.top}px`;
+    card.$element.style.width    = `${rect.width}px`;
+    card.$element.style.zIndex   = '9999';
+    card.$element.style.margin   = '0';
+    document.body.appendChild(card.$element);
 }
 
 function resetDragState(card) {
     card.isDragging = false;
     card.$element.classList.remove('card--dragging');
+
+    // Put card back where it came from
+    if (card._originalParent) {
+        card._originalParent.insertBefore(card.$element, card._originalNextSibling);
+    }
+
+    // Clear all drag styles
+    card.$element.style.position  = '';
+    card.$element.style.left      = '';
+    card.$element.style.top       = '';
+    card.$element.style.width     = '';
+    card.$element.style.zIndex    = '';
+    card.$element.style.margin    = '';
     card.$element.style.transform = card.initialTransform;
+
+    card._originalParent      = null;
+    card._originalNextSibling = null;
 }
 
 function dispatchDropEvent(card, touch) {

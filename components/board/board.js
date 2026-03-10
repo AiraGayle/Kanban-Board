@@ -1,7 +1,7 @@
 // Board — coordinates columns, tasks state, keyboard shortcuts
-import { Column } from '../column/column.js';
-import { TaskService } from '../../services/task-service.js';
-import { StorageService } from '../../services/storage-service.js';
+import { Column } from '../column/Column.js';
+import { TaskService } from '../../services/TaskService.js';
+import { StorageService } from '../../services/StorageService.js';
 import { buildColumnCallbacks, buildCardCallbacks } from './board-callbacks.js';
 import { setupKeyboard } from './board-keyboard.js';
 import * as TaskHandlers from './board-tasks.js';

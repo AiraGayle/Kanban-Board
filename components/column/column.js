@@ -1,6 +1,6 @@
 // Column — encapsulates a kanban column's DOM, add form, card rendering, drag-drop
 import { makeElement } from '../../utils/dom-utils.js';
-import { Card } from '../card/card.js';
+import { Card } from '../card/Card.js';
 import { buildColumn } from './column-dom.js';
 
 export class Column {
@@ -35,7 +35,7 @@ export class Column {
             this.$tasks.appendChild(makeElement('p', 'column__empty-state', 'No tasks yet'));
             return;
         }
-        cards.forEach(data => Card.fromJSON(data, cardCallbacks).render(this.$tasks));
+        cards.forEach(data => Card.createCard(data, cardCallbacks).render(this.$tasks));
     }
 
     showAddForm() {

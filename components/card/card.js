@@ -111,7 +111,7 @@ export class Card {
         if (Card.currentEditing === this) Card.currentEditing = null;
     }
 
-    static fromJSON(data, callbacks) {
+    static createCard(data, callbacks) {
         return new Card(data, callbacks);
     }
 }

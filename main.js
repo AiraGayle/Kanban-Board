@@ -1,5 +1,14 @@
 // Main — initializes the Kanban app
-import Board from './components/board/board.js';
+import Board from "./components/board/Board.js";
+
+const isMobile = 'ontouchstart' in window;
+
+if (isMobile) {
+  const shortcuts = document.querySelector('.board__shortcuts');
+  if (shortcuts) {
+    shortcuts.style.display = "none";
+  }
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     try {
