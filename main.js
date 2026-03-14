@@ -1,14 +1,18 @@
 // Main — initializes the Kanban app
 import Board from "./components/board/Board.js";
 
-const isMobile = 'ontouchstart' in window;
+const isMobile = window.matchMedia("(max-width: 768px)");
 
-if (isMobile) {
+function updateShortcutsVisibilityMQ(e) {
   const shortcuts = document.querySelector('.board__shortcuts');
-  if (shortcuts) {
-    shortcuts.style.display = "none";
-  }
+  if (!shortcuts) return;
+
+  shortcuts.style.display = e.matches ? "none" : "";
 }
+
+isMobile.addEventListener("change", updateShortcutsVisibilityMQ);
+
+updateShortcutsVisibilityMQ(isMobile);
 
 document.addEventListener('DOMContentLoaded', () => {
     try {
