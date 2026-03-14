@@ -31,7 +31,6 @@ export function attachDragListeners(card) {
     const mq = window.matchMedia('(max-width: 768px)');
 
     function applyListeners(mobile) {
-        // Always clean up all listeners first
         card.$element.removeEventListener('touchstart',  card._onTouchStart);
         card.$element.removeEventListener('touchmove',   card._onTouchMove);
         card.$element.removeEventListener('touchend',    card._onTouchEnd);
@@ -50,14 +49,12 @@ export function attachDragListeners(card) {
             card.$element.addEventListener('touchend',    card._onTouchEnd,    { passive: false });
             card.$element.addEventListener('touchcancel', card._onTouchCancel, { passive: false });
 
-            // Desktop: make sure element is not draggable when in mobile mode
             card.$element.draggable = false;
         } else {
-            // Desktop: use native drag API, no fixed positioning involved
             card.$element.draggable = true;
 
             card._onDragStart = (e) => {
-                // Create a clean ghost image from the card itself
+  
                 const ghost = card.$element.cloneNode(true);
                 ghost.style.position = 'fixed';
                 ghost.style.top      = '-9999px';
@@ -68,7 +65,6 @@ export function attachDragListeners(card) {
                 e.dataTransfer.setDragImage(ghost, e.offsetX, e.offsetY);
                 e.dataTransfer.effectAllowed = 'move';
 
-                // Clean up ghost after drag starts (browser has captured it)
                 requestAnimationFrame(() => document.body.removeChild(ghost));
 
                 card.callbacks.onDragStart(card.id);
