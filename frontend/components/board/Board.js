@@ -6,6 +6,9 @@ import { buildColumnCallbacks, buildCardCallbacks } from './board-callbacks.js';
 import { setupKeyboard } from './board-keyboard.js';
 import * as TaskHandlers from './board-tasks.js';
 
+import { Logout } from './logout.js';
+
+
 const COLUMN_CONFIGS = [
     { name: 'to-do',  label: 'To do', colorModifier: 'todo'  },
     { name: 'doing',  label: 'Doing', colorModifier: 'doing' },
@@ -27,6 +30,9 @@ export default class Board {
         setupKeyboard(this);
         this.setupColumns($container);
         this.refresh();
+
+        const logoutBtn = Logout();
+        $container.appendChild(logoutBtn);
     }
 
     setupColumns($container) {

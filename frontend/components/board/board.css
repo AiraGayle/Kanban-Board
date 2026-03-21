@@ -33,4 +33,17 @@
     overflow-x: auto;
     overflow-y: hidden;
     padding-bottom: 1rem;
+    
+}
+
+.logout-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 8px 14px;
+    background-color: #e41cef;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }
