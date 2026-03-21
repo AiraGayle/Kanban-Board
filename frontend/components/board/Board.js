@@ -6,7 +6,7 @@ import { buildColumnCallbacks, buildCardCallbacks } from './board-callbacks.js';
 import { setupKeyboard } from './board-keyboard.js';
 import * as TaskHandlers from './board-tasks.js';
 
-import { Logout } from './logout.js';
+import { Logout } from '../auth/logout.js';
 
 
 const COLUMN_CONFIGS = [
@@ -31,8 +31,10 @@ export default class Board {
         this.setupColumns($container);
         this.refresh();
 
+
         const logoutBtn = Logout();
         $container.appendChild(logoutBtn);
+
     }
 
     setupColumns($container) {

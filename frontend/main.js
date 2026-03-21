@@ -1,30 +1,57 @@
-// Main — initializes the Kanban app
-import Board from "./components/board/Board.js";
+    // Main — initializes the Kanban app
 
-const isMobile = window.matchMedia("(max-width: 768px)");
+    import Login from "./components/auth/login.js";
+    import Register from "./components/auth/register.js";
+    import BoardScreen from "./components/board/boardScreen.js";
 
-function updateShortcutsVisibilityMQ(e) {
-  const shortcuts = document.querySelector('.board__shortcuts');
-  if (!shortcuts) return;
+    let app;
 
-  shortcuts.style.display = e.matches ? "none" : "";
-}
-
-isMobile.addEventListener("change", updateShortcutsVisibilityMQ);
-
-updateShortcutsVisibilityMQ(isMobile);
-
-document.addEventListener('DOMContentLoaded', () => {
-    try {
-        const $boardColumns = document.getElementById('BOARD_COLUMNS');
-
-        if (!$boardColumns)
-            throw new Error('Board columns container not found in DOM');
-
-        const board = new Board();
-        board.init($boardColumns);
-    } catch (error) {
-        console.error('Application initialization failed:', error.message);
-        alert('Failed to initialize the application. Please refresh the page.');
+    function render(view) {
+        app.innerHTML = '';
+        app.appendChild(view);
     }
-});
+
+    function showLogin() {
+        render(Login({
+            onSuccess: () => showBoard(),
+            onRegister: () => showRegister()
+        }));
+    }
+
+    function showRegister() {
+        render(Register({
+            onSuccess: () => showBoard(),
+            onBack: () => showLogin()
+        }));
+    }
+
+    function showBoard() {
+        render(BoardScreen({
+            onLogout: () => showLogin()
+        }));
+    }
+
+    const isMobile = window.matchMedia("(max-width: 768px)");
+
+    function updateShortcutsVisibilityMQ(e) {
+        const shortcuts = document.querySelector('.board__shortcuts');
+        if (!shortcuts) return;
+
+        shortcuts.style.display = e.matches ? "none" : "";
+    }
+
+    isMobile.addEventListener("change", updateShortcutsVisibilityMQ);
+    updateShortcutsVisibilityMQ(isMobile);
+
+    document.addEventListener("DOMContentLoaded", () => {
+
+        app = document.getElementById('app');
+
+        const isLoggedIn = localStorage.getItem("token"); 
+
+        if (isLoggedIn) {
+            showBoard();
+        } else {
+            showLogin();
+        }
+    });

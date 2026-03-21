@@ -1,0 +1,68 @@
+/* Register Container */
+.register {
+    width: 100%;
+    max-width: 400px;
+    height: 400px;
+    margin: 80px auto;
+    padding: 30px;
+    border-radius: 12px;
+    background-color: #c4ebfb;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Title */
+.register h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #333;
+}
+
+/* Inputs */
+.register input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+}
+
+.register input:focus {
+    outline: none;
+    border-color: #4CAF50;
+}
+
+/* Buttons */
+.register button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+/* Register Button */
+#registerBtn {
+    background-color: #4CAF50;
+    color: white;
+}
+
+#registerBtn:hover {
+    background-color: #45a049;
+}
+
+/* Back Button */
+#backLogin {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+#backLogin:hover {
+    background-color: #ddd;
+}
+

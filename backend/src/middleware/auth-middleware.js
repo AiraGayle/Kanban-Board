@@ -3,10 +3,16 @@
 // This passthrough lets the server run locally while Person 1 builds auth.
 // DO NOT ship this stub — it must be replaced before integration testing.
 
-function authMiddleware(req, _res, next) {
-    // Temporary fake user so task routes can be tested without a real token.
-    req.user = { userId: 1, email: 'dev@example.com' };
-    next();
+function authenticateToken(req, res, next) {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    if (!token) return res.status(401).json({ message: "No token provided" });
+
+    jwt.verify(token, SECRET_KEY, (err, user) => {
+        if (err) return res.status(403).json({ message: "Invalid token" });
+        req.user = user;
+        next();
+    });
 }
 
-module.exports = authMiddleware;
+module.exports = authenticateToken;
