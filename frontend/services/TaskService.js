@@ -7,31 +7,52 @@ export class TaskService {
         return Math.max(...inColumn.map(t => t.order ?? 0));
     }
 
-    createTask(tasks, { title, note, column, priority = 'Low' }) {
-        if (!title.trim()) return tasks;
+    createTaskObject(taskData, existingTasks) {
+        const title = (taskData.title ?? '').trim();
+        if (!title) {
+            throw new Error('Task title is required');
+        }
 
-        const newTask = {
-            id: Date.now(),
-            title: title.trim(),
-            note: (note ?? '').trim(),
-            column,
-            priority,
-            order: this.getMaxOrder(tasks, column) + 1,
+        const now = new Date().toISOString();
+        return {
+            id: taskData.id ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+            title,
+            note: (taskData.note ?? '').trim(),
+            column: taskData.column ?? 'to-do',
+            priority: taskData.priority ?? 'Low',
+            order: this.getMaxOrder(existingTasks, taskData.column ?? 'to-do') + 1,
+            deleted: false,
+            updated_at: now,
+            created_at: taskData.created_at ?? now,
         };
+    }
 
-        return [...tasks, newTask];
+    createTask(tasks, taskData) {
+        const task = this.createTaskObject(taskData, tasks);
+        return { tasks: [...tasks, task], task };
     }
 
     deleteTask(tasks, taskId) {
         return tasks.filter(t => t.id !== taskId);
     }
 
-    updateTask(tasks, taskId, { title, note, priority }) {
-        return tasks.map(t =>
+    updateTask(tasks, taskId, changes) {
+        const now = new Date().toISOString();
+
+        const nextTasks = tasks.map(t =>
             t.id === taskId
-                ? { ...t, title: title.trim(), note: (note ?? '').trim(), priority }
+                ? {
+                      ...t,
+                      title: (changes.title ?? t.title).trim(),
+                      note: (changes.note ?? t.note).trim(),
+                      priority: changes.priority ?? t.priority,
+                      updated_at: now,
+                  }
                 : t
         );
+
+        const updatedTask = nextTasks.find(t => t.id === taskId);
+        return { tasks: nextTasks, updatedTask };
     }
 
     findById(tasks, taskId) {
@@ -47,7 +68,7 @@ export class TaskService {
     moveTask(tasks, taskId, newColumn) {
         const maxOrder = this.getMaxOrder(tasks.filter(t => t.id !== taskId), newColumn);
         return tasks.map(t =>
-            t.id === taskId ? { ...t, column: newColumn, order: maxOrder + 1 } : t
+            t.id === taskId ? { ...t, column: newColumn, order: maxOrder + 1, updated_at: new Date().toISOString() } : t
         );
     }
 
@@ -59,9 +80,16 @@ export class TaskService {
         const inColumn = this.getByColumn(withoutTask, newColumn);
         const safeIndex = Math.max(0, Math.min(insertIndex, inColumn.length));
 
-        const updatedTask = { ...task, column: newColumn };
+        const updatedTask = {
+            ...task,
+            column: newColumn,
+            updated_at: new Date().toISOString(),
+        };
+
         inColumn.splice(safeIndex, 0, updatedTask);
-        inColumn.forEach((t, i) => { t.order = i; });
+        inColumn.forEach((t, i) => {
+            t.order = i;
+        });
 
         return [...withoutTask.filter(t => t.column !== newColumn), ...inColumn];
     }
