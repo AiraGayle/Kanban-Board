@@ -1,1 +1,32 @@
-[]
+[
+  {
+    "username": "hollanov",
+    "email": "dyillyria@gmail.com",
+    "password": "$2b$10$6sblkAn.0jj2TQEE8gSjSe7L0W59whvkbPaEFykAOSStKp2r7XEYa",
+    "board": [
+      {
+        "id": 1774177880656,
+        "title": "sasah",
+        "note": "absab",
+        "column": "to-do",
+        "priority": "Low",
+        "order": 0
+      }
+    ]
+  },
+  {
+    "username": "ilya",
+    "email": "illyriadyyy@gmail.com",
+    "password": "$2b$10$WsRE6ew.regZjQ/.jASe0eGf3FCR2juVg7oJ.y7P5EB/IB8toV9oe",
+    "board": [
+      {
+        "id": 1774177922691,
+        "title": "weee",
+        "note": "",
+        "column": "doing",
+        "priority": "Low",
+        "order": 0
+      }
+    ]
+  }
+]

@@ -1,3 +1,5 @@
+//register.js
+
 export default function Register({ onSuccess, onBack }) {
     const container = document.createElement("div");
     container.classList.add("register");

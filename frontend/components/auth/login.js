@@ -1,5 +1,5 @@
 
-
+//login.js
 export default function Login({ onSuccess, onRegister }) {
     const container = document.createElement("div");
     

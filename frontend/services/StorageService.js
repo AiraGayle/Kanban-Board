@@ -1,22 +1,45 @@
+//StorageService.js
+
 // Storage Service — wraps localStorage for task persistence
 
 export class StorageService {
-    static #STORAGE_KEY = 'tasks';
 
-    save(tasks) {
+    async load() {
         try {
-            localStorage.setItem(StorageService.#STORAGE_KEY, JSON.stringify(tasks));
+            const token = localStorage.getItem("token");
+
+            const res = await fetch("http://localhost:3000/board", {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            const data = await res.json();
+            return data.board || [];
+
         } catch (error) {
-            throw new Error(`Failed to save tasks: ${error.message}`);
+            throw new Error(`Failed to load tasks: ${error.message}`);
         }
     }
 
-    load() {
+    async save(tasks) {
         try {
-            const data = localStorage.getItem(StorageService.#STORAGE_KEY);
-            return data ? JSON.parse(data) : [];
+            const token = localStorage.getItem("token");
+
+            const res= await fetch("http://localhost:3000/board", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({ board: tasks })
+            });
+            const data = await res.json();
+            console.log("SAVE RESPONSE:", data);
+
+
         } catch (error) {
-            throw new Error(`Failed to load tasks: ${error.message}`);
+            throw new Error(`Failed to save tasks: ${error.message}`);
         }
     }
 }

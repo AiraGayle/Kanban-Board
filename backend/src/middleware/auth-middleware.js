@@ -3,6 +3,9 @@
 // This passthrough lets the server run locally while Person 1 builds auth.
 // DO NOT ship this stub — it must be replaced before integration testing.
 
+const jwt = require('jsonwebtoken');
+const SECRET_KEY = "hollanov";
+
 function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];

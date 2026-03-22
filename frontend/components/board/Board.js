@@ -1,3 +1,6 @@
+//Board.js
+
+
 // Board — coordinates columns, tasks state, keyboard shortcuts
 import { Column } from '../column/Column.js';
 import { TaskService } from '../../services/TaskService.js';
@@ -26,9 +29,11 @@ export default class Board {
         this.draggedTaskId = null;
     }
 
-    init($container) {
+    async init($container) {
         setupKeyboard(this);
         this.setupColumns($container);
+
+        this.tasks = await this.storageService.load();
         this.refresh();
 
 
@@ -45,7 +50,7 @@ export default class Board {
         });
     }
 
-    saveAndRefresh() {
+    async saveAndRefresh() {
         this.storageService.save(this.tasks);
         this.refresh();
     }

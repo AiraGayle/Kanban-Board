@@ -5,6 +5,8 @@ const cors       = require('cors');
 const authRoutes = require('./routes/auth-routes');
 const taskRoutes = require('./routes/task-routes');
 
+const boardRoutes = require('./routes/board'); 
+
 const app = express();
 
 app.use(cors({
@@ -20,6 +22,7 @@ app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 
 app.use('/auth',  authRoutes);
 app.use('/tasks', taskRoutes);
+app.use('/board', boardRoutes);
 
 app.use((_req, res) => res.status(404).json({ error: 'Route not found' }));
 
