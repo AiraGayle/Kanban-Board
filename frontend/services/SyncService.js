@@ -9,6 +9,10 @@ export class SyncService {
         this.isProcessing = false;
     }
 
+    getAuthToken() {
+        return localStorage.getItem('token');
+    }
+
     async start() {
         window.addEventListener('online', () => this.processQueue());
         window.addEventListener('offline', () => console.log('Offline mode active.')); 
@@ -17,32 +21,32 @@ export class SyncService {
             await this.processQueue();
         }
 
-        this.openWebSocket();
+        // this.openWebSocket(); // TODO: Implement WebSocket server in backend
     }
 
-    async openWebSocket() {
-        if (!('WebSocket' in window) || !navigator.onLine) return;
+    // async openWebSocket() {
+    //     if (!('WebSocket' in window) || !navigator.onLine) return;
 
-        try {
-            const ws = new WebSocket(`${location.origin.replace(/^http/, 'ws')}/tasks`);
+    //     try {
+    //         const ws = new WebSocket(`${location.origin.replace(/^http/, 'ws')}/tasks`);
 
-            ws.addEventListener('open', () => console.log('WebSocket connected for real-time updates.'));
-            ws.addEventListener('message', async (event) => {
-                const data = JSON.parse(event.data);
-                if (!data?.task) return;
+    //         ws.addEventListener('open', () => console.log('WebSocket connected for real-time updates.'));
+    //         ws.addEventListener('message', async (event) => {
+    //             const data = JSON.parse(event.data);
+    //             if (!data?.task) return;
 
-                const serverTask = this.normalizeTaskFromServer(data.task);
-                await this.storageService.saveTask(serverTask);
-            });
+    //             const serverTask = this.normalizeTaskFromServer(data.task);
+    //             await this.storageService.saveTask(serverTask);
+    //         });
 
-            ws.addEventListener('error', (error) => console.warn('WebSocket error', error));
-            ws.addEventListener('close', () => setTimeout(() => this.openWebSocket(), 5000));
+    //         ws.addEventListener('error', (error) => console.warn('WebSocket error', error));
+    //         ws.addEventListener('close', () => setTimeout(() => this.openWebSocket(), 5000));
 
-            this.websocket = ws;
-        } catch (error) {
-            console.warn('WebSocket setup failed, falling back to polling.', error.message);
-        }
-    }
+    //         this.websocket = ws;
+    //     } catch (error) {
+    //         console.warn('WebSocket setup failed, falling back to polling.', error.message);
+    //     }
+    // }
 
     /*---------------------- queue operations --------------------*/
     async queueTaskUpsert(task) {
@@ -76,14 +80,27 @@ export class SyncService {
                     await this.syncOperation(operation);
                     await this.storageService.removeQueueOperation(operation.queueId);
                 } catch (error) {
+                    if (error.status >= 400 && error.status < 500) {
+                        console.warn(`Skipping operation due to client error: ${error.message}`);
+                        await this.storageService.removeQueueOperation(operation.queueId);
+                        continue;
+                    }
                     console.warn('Sync operation failed, stopping queue process:', error.message);
                     throw error;
                 }
             }
 
-            const remoteTasks = await this.fetchRemoteTasks();
-            if (remoteTasks) {
-                await this.storageService.saveAllTasks(remoteTasks.map((task) => this.normalizeTaskFromServer(task)));
+            try {
+                const remoteTasks = await this.fetchRemoteTasks();
+                if (remoteTasks) {
+                    await this.storageService.saveAllTasks(remoteTasks.map((task) => this.normalizeTaskFromServer(task)));
+                }
+            } catch (error) {
+                if (error.status >= 400 && error.status < 500) {
+                    console.warn(`Skipping remote fetch due to client error: ${error.message}`);
+                } else {
+                    throw error;
+                }
             }
         } catch (error) {
             setTimeout(() => this.processQueue(), SYNC_RETRY_DELAY_MS);
@@ -116,13 +133,18 @@ export class SyncService {
 
         const response = await fetch(API_BASE, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${this.getAuthToken()}`,
+            },
             body: JSON.stringify(taskPayload),
         });
 
         if (!response.ok) {
             const text = await response.text();
-            throw new Error(`Backend error: ${response.status} ${text}`);
+            const error = new Error(`Backend error: ${response.status} ${text}`);
+            error.status = response.status;
+            throw error;
         }
 
         const { task: serverTask } = await response.json();
@@ -152,11 +174,17 @@ export class SyncService {
     async fetchRemoteTasks() {
         const response = await fetch(API_BASE, {
             method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${this.getAuthToken()}`,
+            },
         });
 
         if (!response.ok) {
-            throw new Error(`Failed to fetch remote tasks: ${response.status}`);
+            const text = await response.text();
+            const error = new Error(`Failed to fetch remote tasks: ${response.status} ${text}`);
+            error.status = response.status;
+            throw error;
         }
 
         const { tasks } = await response.json();
