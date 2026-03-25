@@ -1,7 +1,7 @@
 // Storage Service — persists tasks via the backend API (replaces localStorage)
 import { getHeaders } from './AuthService.js';
 
-const API_BASE = (typeof window !== 'undefined' && window.ENV_API_BASE) || 'http://localhost:3000';
+const API_BASE = 'http://localhost:3000';
 
 /** Map frontend task shape → API body shape */
 function toApi(task, { deleted = false } = {}) {
