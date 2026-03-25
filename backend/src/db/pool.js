@@ -1,8 +1,10 @@
 // DB Pool — single shared pg Pool for the whole app
+require('dotenv').config();
 const { Pool } = require('pg');
-console.log(`${process.env.DATABASE_URL}`);
+
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
+  connectionString: process.env.DATABASE_URL,
+  ssl: false
 });
 
 pool.on('error', (err) => {

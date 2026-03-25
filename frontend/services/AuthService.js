@@ -7,13 +7,16 @@ function getHeaders() {
     return {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${getToken()}`,
+        'ngrok-skip-browser-warning': 'true'
     };
 }
 
 async function postToAuth(endpoint, body) {
     const response = await fetch(`${API_BASE}/auth/${endpoint}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+            'Content-Type': 'application/json',
+            'ngrok-skip-browser-warning': 'true' },
         body: JSON.stringify(body),
     });
 

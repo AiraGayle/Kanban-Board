@@ -8,9 +8,9 @@ const taskRoutes = require('./routes/task-routes');
 const app = express();
 
 app.use(cors({
-    origin: process.env.FRONTEND_ORIGIN || '*',
-    methods: ['GET', 'POST', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    origin: ['http://localhost:5500', 'http://127.0.0.1:5500'],
+    methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'ngrok-skip-browser-warning'],
 }));
 
 app.use(express.json());
