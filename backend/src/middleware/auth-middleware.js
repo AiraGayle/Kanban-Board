@@ -1,12 +1,24 @@
-// Auth Middleware — STUB
-// TODO (Person 1): Replace this with real JWT verification using jsonwebtoken.
-// This passthrough lets the server run locally while Person 1 builds auth.
-// DO NOT ship this stub — it must be replaced before integration testing.
+// Auth Middleware — verifies JWT and attaches user to request
+const jwt = require('jsonwebtoken');
 
-function authMiddleware(req, _res, next) {
-    // Temporary fake user so task routes can be tested without a real token.
-    req.user = { userId: 1, email: 'dev@example.com' };
-    next();
+function extractToken(authHeader) {
+    if (!authHeader || !authHeader.startsWith('Bearer ')) return null;
+    return authHeader.slice(7);
+}
+
+function authMiddleware(req, res, next) {
+    const token = extractToken(req.headers.authorization);
+    if (!token) {
+        return res.status(401).json({ error: 'Missing or invalid authorization header' });
+    }
+
+    try {
+        const payload = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = { userId: payload.userId, email: payload.email };
+        next();
+    } catch {
+        res.status(401).json({ error: 'Invalid or expired token' });
+    }
 }
 
 module.exports = authMiddleware;
