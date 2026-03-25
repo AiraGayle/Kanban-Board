@@ -10,7 +10,6 @@ const { clearInterval } = require('timers');
 const clients = new Map();
 
 function addClient(userId, ws) {
-    console.log('addClient userId:', userId, 'type:', typeof userId);
     if (!clients.has(userId)) clients.set(userId, new Set());
     clients.get(userId).add(ws);
 }
@@ -40,11 +39,9 @@ function initWebSocketServer(_server) {
         }
 
         addClient(userId, ws);
-        console.log(`WS connected  userId=${userId}  total=${clients.size} users`);
 
         ws.on('close', () => {
             removeClient(userId, ws);
-            console.log(`WS disconnected userId=${userId}`);
         });
 
         ws.on('error', (err) => console.error('WS error:', err));
@@ -67,8 +64,6 @@ function initWebSocketServer(_server) {
 }
 
 function broadcastToUser(_userId, _payload) {
-    console.log('broadcasting to', _userId, 'clients map size:', clients.size);
-    console.log('looking up:', String(_userId), 'found:', clients.get(String(_userId)));
     const set = clients.get(_userId);
     if (!set || set.size === 0) return;
 

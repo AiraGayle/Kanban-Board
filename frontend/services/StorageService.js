@@ -18,7 +18,7 @@ function toApi(task, { deleted = false } = {}) {
 }
 
 /** Map API response shape → frontend task shape */
-function fromApi(task) {
+export function fromApi(task) {
     return {
         id:       task.id,
         title:    task.title,

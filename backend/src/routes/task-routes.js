@@ -45,7 +45,6 @@ router.get('/', async (req, res) => {
 //
 // Soft delete: pass deleted: true — the row stays in the DB for cron cleanup.
 router.post('/', async (req, res) => {
-    console.log('req.user:', req.user); 
     const { id, title, note, column_name, priority, task_order, deleted, updated_at } = req.body;
     if (!id) {
         return res.status(400).json({ error: 'Task id is required' });

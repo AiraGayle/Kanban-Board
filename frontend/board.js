@@ -1,6 +1,7 @@
 // Board — entry point for the board page
 import Board from './components/board/Board.js';
 import * as AuthService from './services/AuthService.js';
+import { connectWs, disconnectWs } from './services/ws-client.js';
 
 const isMobile = window.matchMedia('(max-width: 768px)');
 
@@ -11,6 +12,7 @@ function updateShortcutsVisibilityMQ(e) {
 }
 
 function handleLogout() {
+    disconnectWs();
     AuthService.logout();
     window.location.replace('index.html');
 }
@@ -31,5 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const $boardColumns = document.getElementById('BOARD_COLUMNS');
     const board = new Board();
+    connectWs();
     board.init($boardColumns);
 });

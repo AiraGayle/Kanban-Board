@@ -1,7 +1,7 @@
 // Board — coordinates columns, tasks state, keyboard shortcuts
 import { Column } from '../column/Column.js';
 import { TaskService } from '../../services/TaskService.js';
-import { StorageService } from '../../services/StorageService.js';
+import { StorageService, fromApi } from '../../services/StorageService.js';
 import { buildColumnCallbacks, buildCardCallbacks } from './board-callbacks.js';
 import { setupKeyboard } from './board-keyboard.js';
 import * as TaskHandlers from './board-tasks.js';
@@ -28,6 +28,19 @@ export default class Board {
         this.setupColumns($container);
         this.tasks = await this.storageService.load();
         this.refresh();
+        
+        window.addEventListener('ws:task-updated', ({ detail: task }) => {
+            const mapped = fromApi(task); 
+            this.tasks = this.tasks.some(t => t.id === mapped.id)
+                ? this.tasks.map(t => t.id === mapped.id ? mapped : t)
+                : [...this.tasks, mapped];
+            this.refresh();
+        });
+
+        window.addEventListener('ws:task-deleted', ({ detail: task }) => {
+            this.tasks = this.tasks.filter(t => t.id !== task.id);
+            this.refresh();
+        });
     }
 
     setupColumns($container) {
