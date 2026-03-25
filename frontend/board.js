@@ -2,6 +2,9 @@
 import Board from './components/board/Board.js';
 import * as AuthService from './services/AuthService.js';
 import { connectWs, disconnectWs } from './services/ws-client.js';
+import { StorageService } from './services/StorageService.js';
+
+const storageService = new StorageService();
 
 const isMobile = window.matchMedia('(max-width: 768px)');
 
@@ -35,4 +38,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const board = new Board();
     connectWs();
     board.init($boardColumns);
+
+    window.addEventListener('online', async () => {
+        console.log('[Sync] Back online, syncing...');
+        await storageService.syncQueue();
+        board.tasks = await storageService.load();
+        board.refresh();
+    });
+
+    window.addEventListener('offline', () => {
+        console.log('[Offline] Gone offline');
+    });
 });

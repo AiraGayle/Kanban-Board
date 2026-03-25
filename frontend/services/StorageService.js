@@ -1,7 +1,10 @@
 // Storage Service — persists tasks via the backend API (replaces localStorage)
 import { getHeaders } from './AuthService.js';
+import { OfflineQueue } from './OfflineQueue.js';
 
 const API_BASE = (typeof window !== 'undefined' && window.ENV_API_BASE) || 'http://localhost:3000';
+
+let _syncing = false;
 
 /** Map frontend task shape → API body shape */
 function toApi(task, { deleted = false } = {}) {
@@ -38,16 +41,34 @@ export class StorageService {
         return tasks.map(fromApi);
     }
 
-    /** Upsert a single task to the DB */
-    async saveTask(task) {
+    async _post(body) {
         const res = await fetch(`${API_BASE}/tasks`, {
             method:  'POST',
             headers: getHeaders(),
-            body:    JSON.stringify(toApi(task)),
+            body:    JSON.stringify(body),
         });
         if (!res.ok) throw new Error('Failed to save task');
-        const { task: saved } = await res.json();
-        return fromApi(saved);
+        return res;
+    }
+
+    /** Upsert a single task to the DB */
+    async saveTask(task) {
+        const body = toApi(task);
+        
+        if (!navigator.onLine) {
+            OfflineQueue.add(body);
+            console.log('[Offline] Delete queued:', task.id);
+            return;
+        }
+        try {
+            const res = await this._post(body);
+            const { task: saved } = await res.json();
+            return fromApi(saved);
+        } catch (err) {
+            OfflineQueue.add(body);
+            console.log('[Offline] Saved to queue:', task.id);
+            return task;
+        }
     }
 
     /** Upsert multiple tasks concurrently (e.g. after a reorder) */
@@ -57,11 +78,43 @@ export class StorageService {
 
     /** Soft-delete a task in the DB */
     async deleteTask(task) {
-        const res = await fetch(`${API_BASE}/tasks`, {
-            method:  'POST',
-            headers: getHeaders(),
-            body:    JSON.stringify(toApi(task, { deleted: true })),
-        });
-        if (!res.ok) throw new Error('Failed to delete task');
+        const body = toApi(task, { deleted: true }); 
+        if (!navigator.onLine) {
+            OfflineQueue.add(body);
+            console.log('[Offline] Delete queued:', task.id);
+            return;
+        }
+        try {
+            await this._post(body);
+        } catch (err) {
+            OfflineQueue.add(body);
+            console.log('[Offline] Network error, delete queued:', task.id);
+        }
+    }
+
+    async syncQueue() {
+        if (_syncing) return;
+        _syncing = true;
+
+        const queue = OfflineQueue.getAll();
+        if (queue.length === 0) { _syncing = false; return; }
+
+        console.log(`[Sync] Syncing ${queue.length} queued tasks...`);
+
+        for (const task of queue) {
+            try {
+                await this._post(task);
+                OfflineQueue.remove(task.id);
+                console.log('[Sync] Synced:', task.id);
+            } catch (err) {
+                if (err.message.startsWith('Server error')) {
+                    console.warn('[Sync] Server rejected, skipping:', task.id);
+                } else {
+                    console.warn('[Sync] Still offline, stopping sync');
+                    break;
+                }
+            }
+        }
+        _syncing = false;
     }
 }
