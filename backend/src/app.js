@@ -4,8 +4,12 @@ const express    = require('express');
 const cors       = require('cors');
 const authRoutes = require('./routes/auth-routes');
 const taskRoutes = require('./routes/task-routes');
+const { ipLimiter, authLimiter } = require('./middleware/rate-limiter');
 
 const app = express();
+
+// to get real IP behind ngrok
+app.set('trust proxy', 1);
 
 app.use(cors({
     origin: ['http://localhost:5500', 'http://127.0.0.1:5500'],
@@ -15,10 +19,13 @@ app.use(cors({
 
 app.use(express.json());
 
+// Global IP rate limiter
+app.use(ipLimiter);
+
 // Health check — useful for ngrok and integration testing
 app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 
-app.use('/auth',  authRoutes);
+app.use('/auth',  authLimiter, authRoutes);
 app.use('/tasks', taskRoutes);
 
 app.use((_req, res) => res.status(404).json({ error: 'Route not found' }));
