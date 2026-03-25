@@ -11,7 +11,7 @@ export class TaskService {
         if (!title.trim()) return tasks;
 
         const newTask = {
-            id: Date.now(),
+            id: crypto.randomUUID(),
             title: title.trim(),
             note: (note ?? '').trim(),
             column,
