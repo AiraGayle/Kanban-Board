@@ -4,7 +4,7 @@
 const express        = require('express');
 const pool           = require('../db/pool');
 const authMiddleware = require('../middleware/auth-middleware');
-
+const { broadcastToUser } = require('../services/ws-service');
 const router = express.Router();
 
 // All task routes require a valid JWT — provided by Person 1
@@ -27,7 +27,7 @@ router.get('/', async (req, res) => {
 
         res.json({ tasks: result.rows });
     } catch (err) {
-        console.error('GET /tasks error:', err.message);
+        console.error('GET /tasks error:', err.message, err.stack);
         res.status(500).json({ error: 'Failed to fetch tasks' });
     }
 });
@@ -45,8 +45,8 @@ router.get('/', async (req, res) => {
 //
 // Soft delete: pass deleted: true — the row stays in the DB for cron cleanup.
 router.post('/', async (req, res) => {
+    console.log('req.user:', req.user); 
     const { id, title, note, column_name, priority, task_order, deleted, updated_at } = req.body;
-
     if (!id) {
         return res.status(400).json({ error: 'Task id is required' });
     }
@@ -90,9 +90,16 @@ router.post('/', async (req, res) => {
         // RETURNING returns nothing — fetch the current server version instead.
         const task = upsertResult.rows[0] ?? await fetchTaskById(id, req.user.userId);
 
+        if (task) {
+            broadcastToUser(req.user.userId, {
+                type:    isDelete ? 'TASK_DELETED' : 'TASK_UPDATED',
+                payload: task,
+            });
+        }
+
         res.json({ task });
     } catch (err) {
-        console.error('POST /tasks error:', err.message);
+        console.error('POST /tasks error:', err.message, err.stack);
         res.status(500).json({ error: 'Failed to save task' });
     }
 });

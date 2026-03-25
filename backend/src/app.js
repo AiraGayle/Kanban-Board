@@ -7,21 +7,8 @@ const taskRoutes = require('./routes/task-routes');
 
 const app = express();
 
-const ALLOWED_ORIGINS = (process.env.FRONTEND_ORIGIN || '')
-    .split(',')
-    .map(o => o.trim())
-    .filter(Boolean);
-
-function isOriginAllowed(origin) {
-    if (ALLOWED_ORIGINS.length === 0) return true;
-    return ALLOWED_ORIGINS.includes(origin);
-}
-
 app.use(cors({
-    origin: (origin, callback) => {
-        if (!origin || isOriginAllowed(origin)) return callback(null, true);
-        callback(new Error(`CORS: origin ${origin} not allowed`));
-    },
+    origin: process.env.FRONTEND_ORIGIN || '*',
     methods: ['GET', 'POST', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
 }));
