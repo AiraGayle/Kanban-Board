@@ -1,38 +1,77 @@
-# Kanban Board
+# Kanban Board — Frontend
 
-A simple, offline Kanban board built using DOM APIs and LocalStorage.
+Vanilla JS offline-first Kanban board with JWT authentication, real-time WebSocket sync, and an offline queue.
+
+---
 
 ## Features
 
-- Three columns: To Do, Doing, Done
-- Create, read, update, refresh, and delete tasks
-- Drag and drop tasks between columns
-- Full keyboard navigation support
-- Mobile responsive design
+- **Three columns** — To Do · Doing · Done
+- **Full task CRUD** — create, edit, move, delete
+- **Drag and drop** — mouse and touch support with auto-scroll
+- **Full keyboard navigation** — see shortcuts table below
+- **Offline-first** — all changes are saved to `localStorage` immediately; an `OfflineQueue` syncs to the backend when connectivity is restored
+- **JWT Authentication** — register, login, and logout; session is persisted in `localStorage`
+- **Real-time updates** — native WebSocket client receives `TASK_UPDATED` / `TASK_DELETED` events and applies them live without a page refresh
+- **Conflict resolution** — last-write-wins via `updated_at` timestamp; server returns its version when it wins so the client can reconcile
+- **Mobile responsive** design
 
-## Restrictions
-- Use only HTML, CSS, and JavaScript
-- No frontend libraries or frameworks
-- Use DOM APIs only (createElement, appendChild, removeChild, etc.)
-- Do not hard-code tasks in HTML
-- Do not use SessionStorage
-- Do not use any database — LocalStorage is the only storage
+---
 
 ## Prerequisites
 
-- A modern web browser (Chrome, Firefox, Edge, etc.)
+- A modern web browser
+- A local HTTP server (required for ES modules — `file://` URLs do not work)
+  - Recommended: [VS Code Live Server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) — serves on `http://localhost:5500`
+- The backend running on `http://localhost:3000` (or your ngrok URL)
 
-## Project Setup
+---
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/AiraGayle/Kanban-Board.git
-   cd Kanban-Board
-   ```
+## Setup
 
-2. **Open the application**
-   Open `index.html` directly in your browser.
-   > Note: because ES modules are used, open via a local server (e.g. VS Code Live Server) rather than `file://`.
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/AiraGayle/Kanban-Board.git
+cd Kanban-Board
+git checkout develop
+```
+
+### 2. Configure the API base URL
+
+Open `frontend/services/AuthService.js` and update `API_BASE` if your backend is not on `localhost:3000`:
+
+```js
+// frontend/services/AuthService.js
+const API_BASE = 'http://localhost:3000';   // ← change to your ngrok URL if needed
+```
+
+Do the same in `frontend/services/StorageService.js`:
+
+```js
+const API_BASE = 'http://localhost:3000';
+```
+
+### 3. Open the app
+
+Open the `frontend/` folder with VS Code Live Server (right-click `index.html` → **Open with Live Server**) or any other static server. The app loads at `http://localhost:5500`.
+
+### 4. Register and log in
+
+- The landing page (`index.html`) presents the login / register form.
+- After successful login, you are redirected to `kanban-board.html`.
+- Your JWT is stored in `localStorage` and sent as `Authorization: Bearer <token>` on every API call.
+
+---
+
+## Offline Testing
+
+1. Open the board while online — tasks load from the backend and are mirrored to `localStorage`.
+2. **Disconnect from the internet** (toggle Wi-Fi off).
+3. Continue adding, editing, moving, and deleting tasks — all changes persist locally.
+4. **Reconnect** — the `OfflineQueue` detects the connection restored event (`window online`) and automatically pushes every queued change to the backend one by one.
+
+---
 
 ## Keyboard Shortcuts
 
@@ -48,34 +87,71 @@ A simple, offline Kanban board built using DOM APIs and LocalStorage.
 ## Project Structure
 
 ```
-.
-├── index.html                          # App shell — structure only
-├── main.js                             # Entry point — initializes Board
+frontend/
+├── index.html                             # Login / register page
+├── kanban-board.html                      # Main board shell
+├── kanban-board.js                        # Board entry point — bootstraps after auth
+├── login.js                               # Auth form logic
 ├── components/
+│   ├── auth/
+│   │   ├── Auth.js                        # Auth component (register/login forms)
+│   │   └── auth.css
 │   ├── board/
-│   │   ├── board.js                    # Board class — orchestrates columns & state
-│   │   ├── board-callbacks.js          # Builds callback objects for columns & cards
-│   │   ├── board-keyboard.js           # Keyboard shortcuts and navigation
-│   │   ├── board-tasks.js              # Task CRUD handlers (called by board)
-│   │   └── board.css                   # Board layout styles
+│   │   ├── Board.js                       # Board class — orchestrates columns & global state
+│   │   ├── board-callbacks.js             # Callback objects passed to Column and Card
+│   │   ├── board-keyboard.js              # Keyboard shortcuts and focus management
+│   │   ├── board-tasks.js                 # Task CRUD handlers (create/update/delete/move)
+│   │   └── board.css                      # Board styles
 │   ├── card/
-│   │   ├── card.js                     # Card class — lifecycle, events, edit toggle
-│   │   ├── card-dom.js                 # Builds card view and edit DOM sections
-│   │   ├── card-drag.js                # Drag & touch handling, auto-scroll
-│   │   └── card.css                    # Card styles
+│   │   ├── Card.js                        # Card lifecycle, events, edit toggle
+│   │   ├── card-dom.js                    # Builds card view and edit DOM nodes
+│   │   ├── card-drag.js                   # Drag & touch handling, auto-scroll
+│   │   └── card.css                       # Card styles
 │   └── column/
-│       ├── column.js                   # Column class — rendering, drop handling
-│       ├── column-dom.js               # Builds column DOM structure
-│       └── column.css                  # Column styles
+│       ├── Column.js                      # Column rendering, drop zone handling
+│       ├── column-dom.js                  # Builds column DOM structure
+│       └── column.css                     # Column styles
 ├── services/
-│   ├── storage-service.js              # localStorage read/write
-│   └── task-service.js                 # Task business logic (CRUD, ordering)
+│   ├── AuthService.js                     # register/login/logout, JWT storage
+│   ├── StorageService.js                  # localStorage reads/writes + API sync
+│   ├── OfflineQueue.js                    # Queues mutations made while offline
+│   ├── TaskService.js                     # Task CRUD and ordering business logic
+│   └── ws-client.js                       # WebSocket client, reconnect logic
 ├── styles/
-│   └── base.css                        # CSS variables, reset, dark/light theme
-├── utils/
-│   └── dom-utils.js                    # Shared makeElement helper
-└── README.md
+│   └── base.css                           # CSS variables, reset, dark/light theme
+└── utils/
+    └── dom-utils.js                       # Shared makeElement helper
 ```
+
+---
+
+## Service Responsibilities
+
+### `AuthService.js`
+
+- `register(email, password)` — calls `POST /auth/register`, saves token + user to `localStorage`
+- `login(email, password)` — calls `POST /auth/login`, saves token + user
+- `logout()` — clears token and user from `localStorage`
+- `isLoggedIn()` — checks whether a token exists
+- `getHeaders()` — returns headers object with `Authorization: Bearer <token>`
+
+### `StorageService.js`
+
+Dual-layer storage: every write goes to `localStorage` first, then attempts an API call. On failure, the task is pushed to `OfflineQueue`.
+
+On page load, tasks are fetched from the backend and merged with local state.
+
+### `OfflineQueue.js`
+
+A `localStorage`-backed queue of pending task mutations. Each entry is deduplicated by task `id` — only the latest version of a task is queued.
+
+The queue is drained automatically when the `window` fires the `online` event.
+
+### `ws-client.js`
+
+Opens `ws://localhost:3000?token=<jwt>`. Reconnects with exponential back-off on disconnect. Dispatches a custom `kanban:ws-message` DOM event for each message received so components can subscribe without coupling to the service.
+
+---
 
 ## Made With
 
@@ -85,4 +161,5 @@ A simple, offline Kanban board built using DOM APIs and LocalStorage.
 
 ## Acknowledgments
 
-Created as part of Lab Exercise 1: Dynamic UI, DOM API, LocalStorage
+Built as Lab Exercise 2: Online Sync Kanban Board.
+Extended from Lab Exercise 1: Dynamic UI, DOM API, LocalStorage.
