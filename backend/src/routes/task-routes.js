@@ -1,13 +1,10 @@
 // Task Routes — GET /tasks, POST /tasks (create / update / soft-delete)
-// Uses a single POST endpoint for all mutations (create, update, soft-delete).
-// Conflict resolution: last-write-wins via updated_at comparison in ON CONFLICT clause.
 const express        = require('express');
 const pool           = require('../db/pool');
 const authMiddleware = require('../middleware/auth-middleware');
 const { broadcastToUser } = require('../services/ws-service');
 const router = express.Router();
 
-// All task routes require a valid JWT — provided by Person 1
 router.use(authMiddleware);
 
 // ─── GET /tasks ─────────────────────────────────────────────────────────────
@@ -37,11 +34,6 @@ router.get('/', async (req, res) => {
 //
 // Body shape:
 //   { id, title, note, column_name, priority, task_order, deleted, updated_at }
-//
-// Conflict resolution (offline-first):
-//   ON CONFLICT (id) DO UPDATE ... WHERE tasks.updated_at <= EXCLUDED.updated_at
-//   If the server copy is newer (another client won), the row is NOT updated
-//   and the server's current version is returned so the caller can reconcile.
 //
 // Soft delete: pass deleted: true — the row stays in the DB for cron cleanup.
 router.post('/', async (req, res) => {

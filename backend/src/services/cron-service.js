@@ -1,6 +1,4 @@
-// Cron Service — STUB
-// TODO (Person 5): Implement scheduled background jobs using node-cron.
-// Signature expected by server.js:  initCronJobs()
+// Cron Service — scheduled cleanup of soft-deleted tasks (older than 30 days)
 const cron = require('node-cron');
 const pool = require('../db/pool');
 

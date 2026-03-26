@@ -1,7 +1,4 @@
 // WS Service — STUB
-// TODO (Person 4): Implement WebSocket server and broadcastToUser().
-// Signature expected by server.js:  initWebSocketServer(httpServer)
-// Signature expected by task-routes.js:  broadcastToUser(userId, payload)
 const { WebSocketServer, WebSocket } = require('ws');
 const jwt = require('jsonwebtoken');
 const url = require('url');

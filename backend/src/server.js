@@ -1,4 +1,4 @@
-// Server — creates HTTP server and attaches WebSocket + cron stubs
+// Server — creates HTTP server and attaches WebSocket and cron
 require('dotenv').config();
 const http = require('http');
 const app  = require('./app');

@@ -123,36 +123,6 @@ frontend/
     └── dom-utils.js                       # Shared makeElement helper
 ```
 
----
-
-## Service Responsibilities
-
-### `AuthService.js`
-
-- `register(email, password)` — calls `POST /auth/register`, saves token + user to `localStorage`
-- `login(email, password)` — calls `POST /auth/login`, saves token + user
-- `logout()` — clears token and user from `localStorage`
-- `isLoggedIn()` — checks whether a token exists
-- `getHeaders()` — returns headers object with `Authorization: Bearer <token>`
-
-### `StorageService.js`
-
-Dual-layer storage: every write goes to `localStorage` first, then attempts an API call. On failure, the task is pushed to `OfflineQueue`.
-
-On page load, tasks are fetched from the backend and merged with local state.
-
-### `OfflineQueue.js`
-
-A `localStorage`-backed queue of pending task mutations. Each entry is deduplicated by task `id` — only the latest version of a task is queued.
-
-The queue is drained automatically when the `window` fires the `online` event.
-
-### `ws-client.js`
-
-Opens `ws://localhost:3000?token=<jwt>`. Reconnects with exponential back-off on disconnect. Dispatches a custom `kanban:ws-message` DOM event for each message received so components can subscribe without coupling to the service.
-
----
-
 ## Made With
 
 - JavaScript

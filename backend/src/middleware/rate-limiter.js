@@ -1,3 +1,4 @@
+// Rate Limiter — IP-based and auth-based rate limiting 
 const rateLimit = require('express-rate-limit');
 
 const ipLimiter = rateLimit({
