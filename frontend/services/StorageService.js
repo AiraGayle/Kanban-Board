@@ -2,7 +2,7 @@
 import { getHeaders } from './AuthService.js';
 import { OfflineQueue } from './OfflineQueue.js';
 
-const API_BASE = 'http://localhost:3000';
+const API_BASE    = (typeof window !== 'undefined' && window.ENV_API_BASE) || 'http://localhost:3000';
 
 let _syncing = false;
 

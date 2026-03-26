@@ -1,5 +1,5 @@
 // Auth Service — register/login API calls and JWT token management
-const API_BASE = 'http://localhost:3000';
+const API_BASE    = (typeof window !== 'undefined' && window.ENV_API_BASE) || 'http://localhost:3000';
 const TOKEN_KEY   = 'auth_token';
 const USER_KEY    = 'auth_user';
 
