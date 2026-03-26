@@ -32,7 +32,7 @@ Kanban-Board/
 ```bash
 git clone https://github.com/AiraGayle/Kanban-Board.git
 cd Kanban-Board
-git checkout develop
+git checkout dev
 ```
 
 ---
@@ -121,21 +121,3 @@ Open the `frontend/` folder with a local server. The easiest option is [VS Code 
 | **Rate limiting** | 100 req / 15 min per IP globally; 5 req / 15 min per email on `/auth` routes. |
 
 ---
-
-## API Reference
-
-See [`backend/README.md`](./backend/README.md) for full endpoint documentation, request/response examples, and WebSocket details.
-
----
-
-## Postman Collection
-
-A complete Postman collection is included in the repository:
-
-```
-backend/postman/
-├── Kanban-Board.postman_collection.json   # All endpoints with example requests & test scripts
-└── Kanban-Board.postman_environment.json  # Environment variables (base_url, token, task_id)
-```
-
-Import both files into Postman to get started. See [`backend/README.md`](./backend/README.md) for usage instructions.
