@@ -1,88 +1,123 @@
-# Kanban Board
+# Kanban Board — Lab Exercise 2
 
-A simple, offline Kanban board built using DOM APIs and LocalStorage.
+A full-stack, offline-first Kanban board with real-time sync, authentication, and background jobs.
 
-## Features
 
-- Three columns: To Do, Doing, Done
-- Create, read, update, refresh, and delete tasks
-- Drag and drop tasks between columns
-- Full keyboard navigation support
-- Mobile responsive design
 
-## Restrictions
-- Use only HTML, CSS, and JavaScript
-- No frontend libraries or frameworks
-- Use DOM APIs only (createElement, appendChild, removeChild, etc.)
-- Do not hard-code tasks in HTML
-- Do not use SessionStorage
-- Do not use any database — LocalStorage is the only storage
+## Repository Structure
 
-## Prerequisites
+```
+Kanban-Board/
+├── frontend/          # Vanilla JS + HTML/CSS client (no frameworks)
+├── backend/           # Node.js + Express REST API + WebSocket server + Cron Job server
+└── README.md          # ← you are here
+```
 
-- A modern web browser (Chrome, Firefox, Edge, etc.)
 
-## Project Setup
 
-1. **Clone the repository**
+## Quick Start
+
+### Prerequisites
+
+| Tool | Version |
+|------|---------|
+| Node.js | 18 or higher |
+| PostgreSQL | 14 or higher |
+| npm | 9 or higher |
+
+---
+
+### 1 — Clone the repository
+
+```bash
+git clone https://github.com/AiraGayle/Kanban-Board.git
+cd Kanban-Board
+git checkout dev
+```
+
+---
+
+### 2 — Set up the backend
+
+```bash
+cd backend
+npm install
+```
+
+Copy the environment template and fill in your values:
+
+```bash
+cp .env.example .env
+```
+
+Minimum required values in `.env`:
+
+```
+PORT=3000
+DATABASE_URL=postgresql://postgres:your_password@localhost:5432/kanban_db
+JWT_SECRET=replace_with_a_long_random_string
+```
+
+Generate a secure `JWT_SECRET`:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+```
+
+Create and seed the database:
+
+```bash
+psql -U postgres -c "CREATE DATABASE kanban_db;"
+psql -U postgres -d kanban_db -f src/db/schema.sql
+```
+
+Start the backend:
+
+```bash
+npm run dev        # development (nodemon)
+npm start          # production
+```
+
+The API will be available at `http://localhost:3000`.
+
+---
+
+### 3 — Set up the frontend
+
+The frontend is plain HTML/CSS/JS — no build step required.
+
+Open the `frontend/` folder with a local server. The easiest option is [VS Code Live Server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer), which serves the folder at `http://localhost:5500`.
+
+> ⚠️ The frontend uses ES modules (`import`/`export`), so it **must** be opened via a local server — not a `file://` URL.
+
+---
+
+### 4 — Testing offline + online with two laptops
+
+1. **Backend laptop** — run `npm run dev` in `backend/`. Optionally expose it with [ngrok](https://ngrok.com/):
    ```bash
-   git clone https://github.com/AiraGayle/Kanban-Board.git
-   cd Kanban-Board
+   ngrok http 3000
    ```
+   Copy the `https://xxxx.ngrok-free.app` URL.
 
-2. **Open the application**
-   Open `index.html` directly in your browser.
-   > Note: because ES modules are used, open via a local server (e.g. VS Code Live Server) rather than `file://`.
+2. **Frontend laptop** — update `API_BASE` in `frontend/services/AuthService.js` and `frontend/services/StorageService.js` to point to the ngrok URL (or `http://localhost:3000` for local testing).
 
-## Keyboard Shortcuts
+3. Turn off Wi-Fi on the frontend laptop — the board continues working from `localStorage`.
 
-| Shortcut       | Action                  |
-|----------------|-------------------------|
-| Alt + A        | Add task to focused col |
-| Alt + E        | Edit selected card      |
-| Alt + D        | Delete selected card    |
-| Alt + ← / →    | Move card left / right  |
-| ← / →          | Switch focused column   |
-| ↑ / ↓          | Navigate cards          |
+4. Re-enable Wi-Fi — the offline queue automatically syncs unsynced changes to the backend.
 
-## Project Structure
 
-```
-.
-├── index.html                          # App shell — structure only
-├── main.js                             # Entry point — initializes Board
-├── components/
-│   ├── board/
-│   │   ├── board.js                    # Board class — orchestrates columns & state
-│   │   ├── board-callbacks.js          # Builds callback objects for columns & cards
-│   │   ├── board-keyboard.js           # Keyboard shortcuts and navigation
-│   │   ├── board-tasks.js              # Task CRUD handlers (called by board)
-│   │   └── board.css                   # Board layout styles
-│   ├── card/
-│   │   ├── card.js                     # Card class — lifecycle, events, edit toggle
-│   │   ├── card-dom.js                 # Builds card view and edit DOM sections
-│   │   ├── card-drag.js                # Drag & touch handling, auto-scroll
-│   │   └── card.css                    # Card styles
-│   └── column/
-│       ├── column.js                   # Column class — rendering, drop handling
-│       ├── column-dom.js               # Builds column DOM structure
-│       └── column.css                  # Column styles
-├── services/
-│   ├── storage-service.js              # localStorage read/write
-│   └── task-service.js                 # Task business logic (CRUD, ordering)
-├── styles/
-│   └── base.css                        # CSS variables, reset, dark/light theme
-├── utils/
-│   └── dom-utils.js                    # Shared makeElement helper
-└── README.md
-```
 
-## Made With
+## Feature Overview
 
-- JavaScript
-- HTML
-- CSS
+| Feature | Description |
+|---------|-------------|
+| **Offline-first** | All task mutations are saved to `localStorage` first. When online, an `OfflineQueue` pushes unsynced changes to the API. Conflict resolution uses last-write-wins via `updated_at`. |
+| **Authentication** | JWT-based register/login/logout. Passwords are bcrypt-hashed (12 rounds). All task routes are protected. |
+| **REST API** | `POST /auth/register`, `POST /auth/login`, `GET /tasks`, `POST /tasks` (create / update / soft-delete). |
+| **Real-time** | Native WebSocket server. Task create/update/delete broadcasts to all tabs/devices of the same user instantly. |
+| **Database** | PostgreSQL with `users` and `tasks` tables. Soft-deletion keeps rows for cron cleanup. |
+| **Cron job** | Daily cleanup of soft-deleted tasks older than 30 days (`0 0 * * *`). |
+| **Rate limiting** | 100 req / 15 min per IP globally; 5 req / 15 min per email on `/auth` routes. |
 
-## Acknowledgments
-
-Created as part of Lab Exercise 1: Dynamic UI, DOM API, LocalStorage
+---
