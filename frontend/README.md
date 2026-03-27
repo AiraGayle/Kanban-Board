@@ -91,6 +91,7 @@ frontend/
 ├── kanban-board.html                      # Main board shell
 ├── kanban-board.js                        # Board entry point — bootstraps after auth
 ├── login.js                               # Auth form logic
+├── config.js                              # API base URL — swap local ↔ ngrok here
 ├── components/
 │   ├── auth/
 │   │   ├── Auth.js                        # Auth component (register/login forms)
