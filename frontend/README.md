@@ -1,6 +1,6 @@
 # Kanban Board — Frontend
 
-Vanilla JS offline-first Kanban board with JWT authentication, real-time WebSocket sync, and an offline queue.
+Vanilla JS offline-first Kanban board with JWT authentication, real-time WebSocket sync, with Cron Job scheduling, and an offline queue.
 
 
 ## Features

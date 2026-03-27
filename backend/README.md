@@ -59,7 +59,6 @@ DATABASE_URL=postgresql://postgres:your_password@localhost:5432/kanban_db
 JWT_SECRET=replace_with_long_random_string
 JWT_EXPIRES_IN=7d
 BCRYPT_ROUNDS=12
-FRONTEND_ORIGIN=http://localhost:5500
 ```
 
 Generate a secure `JWT_SECRET`:

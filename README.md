@@ -9,7 +9,7 @@ A full-stack, offline-first Kanban board with real-time sync, authentication, an
 ```
 Kanban-Board/
 ├── frontend/          # Vanilla JS + HTML/CSS client (no frameworks)
-├── backend/           # Node.js + Express REST API + WebSocket server
+├── backend/           # Node.js + Express REST API + WebSocket server + Cron Job server
 └── README.md          # ← you are here
 ```
 
