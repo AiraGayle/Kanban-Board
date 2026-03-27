@@ -16,7 +16,8 @@ async function postToAuth(endpoint, body) {
         method: 'POST',
         headers: { 
             'Content-Type': 'application/json',
-            'ngrok-skip-browser-warning': 'true' },
+            'ngrok-skip-browser-warning': 'true' 
+        },
         body: JSON.stringify(body),
     });
 

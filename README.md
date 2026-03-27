@@ -2,7 +2,7 @@
 
 A full-stack, offline-first Kanban board with real-time sync, authentication, and background jobs.
 
----
+
 
 ## Repository Structure
 
@@ -13,7 +13,7 @@ Kanban-Board/
 └── README.md          # ← you are here
 ```
 
----
+
 
 ## Quick Start
 
@@ -106,7 +106,7 @@ Open the `frontend/` folder with a local server. The easiest option is [VS Code 
 
 4. Re-enable Wi-Fi — the offline queue automatically syncs unsynced changes to the backend.
 
----
+
 
 ## Feature Overview
 

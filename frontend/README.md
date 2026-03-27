@@ -2,7 +2,6 @@
 
 Vanilla JS offline-first Kanban board with JWT authentication, real-time WebSocket sync, and an offline queue.
 
----
 
 ## Features
 
@@ -16,7 +15,7 @@ Vanilla JS offline-first Kanban board with JWT authentication, real-time WebSock
 - **Conflict resolution** — last-write-wins via `updated_at` timestamp; server returns its version when it wins so the client can reconcile
 - **Mobile responsive** design
 
----
+
 
 ## Prerequisites
 
@@ -25,7 +24,7 @@ Vanilla JS offline-first Kanban board with JWT authentication, real-time WebSock
   - Recommended: [VS Code Live Server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) — serves on `http://localhost:5500`
 - The backend running on `http://localhost:3000` (or your ngrok URL)
 
----
+
 
 ## Setup
 
@@ -62,7 +61,7 @@ Open the `frontend/` folder with VS Code Live Server (right-click `index.html` �
 - After successful login, you are redirected to `kanban-board.html`.
 - Your JWT is stored in `localStorage` and sent as `Authorization: Bearer <token>` on every API call.
 
----
+
 
 ## Offline Testing
 
@@ -71,7 +70,7 @@ Open the `frontend/` folder with VS Code Live Server (right-click `index.html` �
 3. Continue adding, editing, moving, and deleting tasks — all changes persist locally.
 4. **Reconnect** — the `OfflineQueue` detects the connection restored event (`window online`) and automatically pushes every queued change to the backend one by one.
 
----
+
 
 ## Keyboard Shortcuts
 
@@ -105,7 +104,11 @@ frontend/
 │   ├── card/
 │   │   ├── Card.js                        # Card lifecycle, events, edit toggle
 │   │   ├── card-dom.js                    # Builds card view and edit DOM nodes
-│   │   ├── card-drag.js                   # Drag & touch handling, auto-scroll
+│   │   ├── card-drag.js                   # Entry point — binds drag listeners, handles resize
+│   │   ├── card-drag-desktop.js           # HTML5 drag events and ghost image (mouse)
+│   │   ├── card-drag-touch.js             # Touch start/move/end/cancel handlers
+│   │   ├── card-drag-visual.js            # DOM positioning, drag state, drop dispatch
+│   │   ├── card-drag-scroll.js            # Auto-scroll during drag
 │   │   └── card.css                       # Card styles
 │   └── column/
 │       ├── Column.js                      # Column rendering, drop zone handling

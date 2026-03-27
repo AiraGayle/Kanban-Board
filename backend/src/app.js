@@ -12,10 +12,16 @@ const app = express();
 app.set('trust proxy', 1);
 
 app.use(cors({
-    origin: ['http://localhost:5500', 'http://127.0.0.1:5500'],
-    methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+    origin: [
+        'http://localhost:5500', 
+        'http://127.0.0.1:5500',
+        'https://unpetted-voluntarily-yung.ngrok-free.dev',
+    ],
+    methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'], 
     allowedHeaders: ['Content-Type', 'Authorization', 'ngrok-skip-browser-warning'],
 }));
+
+app.options('*', cors());
 
 app.use(express.json());
 
