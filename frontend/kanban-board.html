@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanban Board</title>
+    <link rel="stylesheet" href="styles/base.css">
+    <script src="./config.js"></script>
+    <script type="module" src="kanban-board.js"></script>
+</head>
+<body>
+    <div class="board">
+        <div class="board__header">
+            <h1 class="board__title">Kanban Board</h1>
+            <div class="board__user-menu">
+                <span class="board__user-email" id="USER_BADGE"></span>
+                <button class="board__logout-btn" id="LOGOUT_BTN" type="button">Logout</button>
+            </div>
+        </div>
+        <p class="board__shortcuts">
+            Alt+A: Add &nbsp;|&nbsp; Alt+E: Edit &nbsp;|&nbsp; Alt+D: Delete &nbsp;|&nbsp;
+            Alt+←/→: Move card &nbsp;|&nbsp; ←/→: Switch column &nbsp;|&nbsp; ↑/↓: Navigate cards
+        </p>
+        <div class="board__columns" id="BOARD_COLUMNS"></div>
+    </div>
+</body>
+</html>
